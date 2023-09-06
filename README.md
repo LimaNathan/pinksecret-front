@@ -1,0 +1,3 @@
+# pinksecret_front
+
+A new Flutter project.

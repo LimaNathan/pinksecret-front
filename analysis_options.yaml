@@ -1,0 +1,15 @@
+include: package:flutter_lints/flutter.yaml
+
+code-style:
+  format: true
+
+analyzer:
+  errors:
+    prefer_single_quotes: warning
+    always_use_package_imports: error
+
+linter:
+  rules:
+    prefer_const_constructors: false
+    prefer_single_quotes: true
+    always_use_package_imports: true
