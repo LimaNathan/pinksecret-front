@@ -7,6 +7,8 @@ class LoginForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+      width: MediaQuery.sizeOf(context).width * .35,
+      height: MediaQuery.sizeOf(context).height,
       child: Form(
           child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
