@@ -9,9 +9,9 @@ import 'package:pinksecret_front/src/shared/utils/constants/routes.dart';
 
 class AuthModule extends Module {
   @override
-  void binds(Injector i) {
+  void exportedBinds(Injector i) {
     i
-      ..add<ApiService>(UnoImpl.new)
+      ..addSingleton<ApiService>(UnoImpl.new)
       ..add<AuthServiceInterface>(AuthServiceIMPL.new)
       ..addSingleton(AuthReducer.new);
   }

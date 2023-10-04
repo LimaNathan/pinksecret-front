@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:pinksecret_front/src/features/auth/interactor/atoms/auth_atoms.dart';
 import 'package:pinksecret_front/src/features/auth/ui/components/login_background.dart';
 import 'package:pinksecret_front/src/features/auth/ui/components/login_form.dart';
-import 'package:pinksecret_front/src/shared/utils/constants/image_constants.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -26,11 +25,14 @@ class _LoginPageState extends State<LoginPage> {
       child: state.when(
         init: () {
           return Row(
-            children: [
+            children: const [
               LoginBackground(),
               LoginForm(),
             ],
           );
+        },
+        logged: (state) {
+          return Container();
         },
         loading: (state) {
           return Center(

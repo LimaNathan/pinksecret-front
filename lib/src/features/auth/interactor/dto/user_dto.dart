@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 class UserDTO {
-  final int? id;
-  final String? name;
-  final String? email;
-  final String? password;
-  final String? role;
+  int? id;
+  String? name;
+  String? email;
+  String? password;
+  String? role;
 
   UserDTO({
     this.id,

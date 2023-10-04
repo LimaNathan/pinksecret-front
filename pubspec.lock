@@ -73,6 +73,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
+  dynamic_color:
+    dependency: "direct main"
+    description:
+      name: dynamic_color
+      sha256: de4798a7069121aee12d5895315680258415de9b00e717723a1bd73d58f0126d
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.6.6"
   fake_async:
     dependency: transitive
     description:
@@ -114,10 +122,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_modular
-      sha256: e185410cff7a268cc58832932ae2af48a62c27739aa223241eafc7d122831f0e
+      sha256: ac6298ce1abd414286ee5a554fc45e81e358461979b5d4e02c8abd685e3b23f2
       url: "https://pub.dev"
     source: hosted
-    version: "6.3.1"
+    version: "6.3.2"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -180,10 +188,10 @@ packages:
     dependency: transitive
     description:
       name: modular_core
-      sha256: "306fc8010b37641525f3ada691fd0c66cf8479e149f46926409897e328b442c4"
+      sha256: "5baaa460ac9d85d457d6864ef41a2194b8115a6bdeb585a684789f2d9004c892"
       url: "https://pub.dev"
     source: hosted
-    version: "3.3.1"
+    version: "3.3.2"
   path:
     dependency: transitive
     description:

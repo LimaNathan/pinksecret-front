@@ -6,11 +6,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uno/uno.dart';
 
 class UnoImpl implements ApiService {
-  static const  String _baseURL = String.fromEnvironment('base_url');
+  static const String _baseURL = String.fromEnvironment('base_url');
   final _headers = <String, String>{};
 
   late final Uno _uno = Uno(
     baseURL: _baseURL,
+
   );
 
   UnoImpl() {
@@ -49,12 +50,13 @@ class UnoImpl implements ApiService {
   @override
   Future get(String url, {Map<String, dynamic>? queryParams}) async {
     try {
-      final response = await _uno.get(url,
-          params: (queryParams ?? <String, String>{}) as Map<String, String>,
-          headers: _headers);
+      final response = await _uno.get(
+        url,
+        params: (queryParams ?? <String, String>{}) as Map<String, String>,
+        headers: _headers,
+      );
       if (response.status == 200) {
         return response;
-
       } else {
         throw Exception();
       }

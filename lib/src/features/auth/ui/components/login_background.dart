@@ -15,8 +15,9 @@ class LoginBackground extends StatelessWidget {
           Image.asset(
             ImageConstants.background,
             fit: BoxFit.cover,
-            color: Colors.pink,
-            colorBlendMode: BlendMode.modulate,
+          ),
+          Container(
+            color: Theme.of(context).colorScheme.primary.withAlpha(215),
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
