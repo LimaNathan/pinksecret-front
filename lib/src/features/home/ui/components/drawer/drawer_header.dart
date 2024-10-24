@@ -24,7 +24,7 @@ class CustomDrawerHeader extends StatelessWidget {
             visible: !isMobile,
             child: Text(
               'Pinksecret',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.nunito(
                 textStyle: TextStyle(
                   letterSpacing: 1.5,
                   fontSize: 12,

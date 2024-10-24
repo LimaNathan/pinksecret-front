@@ -76,6 +76,7 @@ class _AppWidgetState extends State<AppWidget> {
         }
 
         return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
           themeMode: ThemeMode.light,
           title: 'Pink Secret',
           theme: themeDataProvider(
