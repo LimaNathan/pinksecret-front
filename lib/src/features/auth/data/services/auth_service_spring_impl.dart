@@ -1,5 +1,6 @@
 import 'package:pinksecret_front/src/core/service/api_service.dart';
 import 'package:pinksecret_front/src/features/auth/interactor/dto/user_dto.dart';
+import 'package:pinksecret_front/src/features/auth/interactor/entities/tokenization.dart';
 import 'package:pinksecret_front/src/features/auth/interactor/service/auth_service_interface.dart';
 import 'package:pinksecret_front/src/features/auth/interactor/states/auth_state.dart';
 import 'package:pinksecret_front/src/shared/utils/constants/endpoints.dart';
@@ -11,7 +12,20 @@ class AuthServiceSpringImpl implements AuthServiceInterface {
   AuthServiceSpringImpl(this.api);
   @override
   Future<AuthState> checkAuth() async {
-    return Unlogged();
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final response = await api.post(AuthEndpoints.checkToken, body: prefs.getString(SharedPrefsKeys.token));
+
+      if (response != null) {
+        return Logged(Tokenization(
+            accessToken: response.data['token'],
+            refreshToken: response.data['refreshToken']));
+      } else {
+        return Unlogged();
+      }
+    } catch (e) {
+      return Unlogged();
+    }
   }
 
   @override

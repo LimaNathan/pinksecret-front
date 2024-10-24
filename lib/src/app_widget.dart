@@ -2,6 +2,8 @@ import 'package:asp/asp.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:pinksecret_front/src/core/interactor/atoms/core_atoms.dart';
+import 'package:pinksecret_front/src/core/interactor/model/enum/device_type.dart';
 import 'package:pinksecret_front/src/features/auth/interactor/atoms/auth_atoms.dart';
 import 'package:pinksecret_front/src/features/auth/interactor/states/auth_state.dart';
 import 'package:pinksecret_front/src/shared/theme/material-theme/color_schemes.g.dart';
@@ -34,6 +36,15 @@ class _AppWidgetState extends State<AppWidget> {
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
         ColorScheme lightScheme;
         ColorScheme darkScheme;
+
+        deviceType.setValue(
+          switch (MediaQuery.sizeOf(context).width) {
+            < 600 => DeviceType.mobile,
+            >= 600 && < 1200 => DeviceType.tablet,
+            >= 1200 => DeviceType.desktop,
+            _ => DeviceType.desktop,
+          },
+        );
 
         if (lightDynamic != null && darkDynamic != null) {
           lightScheme = lightDynamic.harmonized();

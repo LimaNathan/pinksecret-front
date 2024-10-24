@@ -6,18 +6,18 @@ class HomeReducer extends Reducer {
   HomeReducer() {
     on(() => [toShopAction], _toShopAction);
     on(() => [toStorageAction], _toStorageAction);
-    on(() => [toFinancialAction], _toFinancialAction);
+    on(() => [toDashboard], _toDashboard);
   }
 
   void _toShopAction() {
-    homeState.value = ShopState();
+    homeState.setValue(ShopState());
+  }
+
+  void _toDashboard() {
+    homeState.setValue(DashboardState());
   }
 
   void _toStorageAction() {
-    homeState.value = StorageState();
-  }
-
-  void _toFinancialAction() {
-    homeState.value = FinancialState();
+    homeState.setValue(StorageState());
   }
 }

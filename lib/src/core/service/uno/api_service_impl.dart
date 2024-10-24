@@ -7,11 +7,12 @@ import 'package:uno/uno.dart';
 
 class UnoImpl implements ApiService {
   static const String _baseURL = String.fromEnvironment('base_url');
+
+  static const String apiLogger = 'API';
   final _headers = <String, String>{};
 
   late final Uno _uno = Uno(
     baseURL: _baseURL,
-
   );
 
   UnoImpl() {
@@ -20,7 +21,7 @@ class UnoImpl implements ApiService {
 
   Future<Map<String, String>> _getBearer() async {
     final prefs = await SharedPreferences.getInstance();
-
+  
     final token = prefs.get(SharedPrefsKeys.token);
     if (token != null) {
       _headers.addAll({'Authorization': 'Bearer $token'});
@@ -43,7 +44,7 @@ class UnoImpl implements ApiService {
         throw Exception();
       }
     } catch (e) {
-      log('error deleting data from api: $e');
+      log('error deleting data from api: $e', name: apiLogger);
     }
   }
 
@@ -61,12 +62,12 @@ class UnoImpl implements ApiService {
         throw Exception();
       }
     } catch (e) {
-      log('error deleting data from api: $e');
+      log('error deleting data from api: $e', name: apiLogger);
     }
   }
 
   @override
-  Future post(String url, {Map<String, dynamic>? body}) async {
+  Future post(String url, {dynamic body}) async {
     try {
       final response = await _uno.post(url, data: body, headers: _headers);
 
@@ -76,7 +77,7 @@ class UnoImpl implements ApiService {
         throw Exception();
       }
     } catch (e) {
-      log('error deleting data from api: $e');
+      log('error deleting data from api: $e', name: apiLogger);
     }
   }
 
@@ -90,7 +91,7 @@ class UnoImpl implements ApiService {
         throw Exception();
       }
     } catch (e) {
-      log('error deleting data from api: $e');
+      log('error deleting data from api: $e', name: apiLogger);
     }
   }
 

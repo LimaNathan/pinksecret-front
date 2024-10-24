@@ -1,4 +1,5 @@
 class ImageConstants {
+  ImageConstants._();
   static const String background = 'images/back-photo.jpg';
   static const String logo = 'images/logo-fundo-transparente.png';
   static const String logoResumida = 'images/logo-ps-sem-fundo.png';

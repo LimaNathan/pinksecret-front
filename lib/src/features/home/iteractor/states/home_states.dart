@@ -3,12 +3,14 @@ sealed class HomeState {
       {required T Function() init,
       T Function(ShopState)? shop,
       T Function(StorageState)? storage,
+      T Function(DashboardState)? dashboard,
       T Function(FinancialState)? financial}) {
     return switch (this) {
       InitalHomeState _ => init(),
       ShopState s => shop?.call(s) ?? init(),
       StorageState s => storage?.call(s) ?? init(),
       FinancialState s => financial?.call(s) ?? init(),
+      DashboardState s => dashboard?.call(s) ?? init(),
     };
   }
 }
@@ -16,6 +18,8 @@ sealed class HomeState {
 class InitalHomeState extends HomeState {}
 
 class ShopState extends HomeState {}
+
+class DashboardState extends HomeState {}
 
 class StorageState extends HomeState {}
 

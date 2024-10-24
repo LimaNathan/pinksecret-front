@@ -1,11 +1,12 @@
 class AuthEndpoints {
+  AuthEndpoints._();
   static const String login = '/auth/login';
-  static const String checkToken = '/auth/check_token';
-  static const String refreshToken = '/auth/refresh_token';
-  static const String updatePassword = '/auth/update_password';
+  static const String checkToken = '/auth/check-token';
+  static const String refreshToken = '/auth/refresh-token';
 }
 
 class UserEndpoints {
+  UserEndpoints._();
   static const String all = '/user/all';
   static const String create = '/user/create';
 
@@ -14,6 +15,7 @@ class UserEndpoints {
 }
 
 class TypeEndpoints {
+  TypeEndpoints._();
   static const String all = '/type/all';
   static const String create = '/type/create';
 
@@ -22,6 +24,7 @@ class TypeEndpoints {
 }
 
 class ProductEndpoints {
+  ProductEndpoints._();
   static const String all = '/product/all';
   static const String create = '/product/create';
 
