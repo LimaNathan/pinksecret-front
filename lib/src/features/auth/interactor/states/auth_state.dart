@@ -25,4 +25,7 @@ class Logged extends AuthState {
   Logged(this.tokenization);
 }
 
-class Unlogged extends AuthState {}
+class Unlogged extends AuthState {
+  String? message;
+  Unlogged({this.message});
+}

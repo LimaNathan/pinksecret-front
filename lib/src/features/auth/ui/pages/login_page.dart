@@ -17,8 +17,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final state = context.select(() => authState.value);
-
-    log(state.toString());
     return Material(
       child: state.when(
         init: () {

@@ -5,8 +5,15 @@
       "name": "Flutter web",
       "request": "launch",
       "type": "dart",
-      "openDevTools": "logging",
-      "args": ["--dart-define-from-file=config.json"]
+      "args": [
+       /*  "-d",
+        "web-server",
+        "--web-hostname",
+        "0.0.0.0",
+        "--web-port",
+        "8888", */
+        "--dart-define-from-file=config.json"
+      ]
     }
   ]
 }

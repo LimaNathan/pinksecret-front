@@ -21,8 +21,17 @@ class _AppWidgetState extends State<AppWidget> {
   @override
   void initState() {
     super.initState();
-    rxObserver(() => authState.value, effect: (state) {
+    rxObserver(() => authState.value, effect: (state) async {
       if (state is Unlogged) {
+        final message =
+            state.message ?? 'Você não está conectado, faça o login novamente.';
+        ScaffoldMessenger.of(context).showMaterialBanner(
+          MaterialBanner(
+            content: Text(message),
+            actions: const [],
+          ),
+        );
+
         Modular.to.navigate('${Routes.auth}${Routes.login}');
       } else if (state is Logged) {
         Modular.to.navigate(Routes.home);

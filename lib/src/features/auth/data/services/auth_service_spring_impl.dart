@@ -14,7 +14,12 @@ class AuthServiceSpringImpl implements AuthServiceInterface {
   Future<AuthState> checkAuth() async {
     final prefs = await SharedPreferences.getInstance();
     try {
-      final response = await api.post(AuthEndpoints.checkToken, body: prefs.getString(SharedPrefsKeys.token));
+      final response = await api.post(
+        AuthEndpoints.checkToken,
+        body: {
+          'token': prefs.getString(SharedPrefsKeys.token),
+        },
+      );
 
       if (response != null) {
         return Logged(Tokenization(
