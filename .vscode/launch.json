@@ -5,8 +5,9 @@
       "name": "Flutter web",
       "request": "launch",
       "type": "dart",
+      "program": "lib/main.dart",
       "args": [
-       /*  "-d",
+        /* "-d",
         "web-server",
         "--web-hostname",
         "0.0.0.0",

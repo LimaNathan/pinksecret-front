@@ -7,15 +7,15 @@ import 'package:pinksecret_front/src/features/home/iteractor/atoms/home_atoms.da
 import 'package:pinksecret_front/src/features/home/ui/components/drawer/custom_drawer.dart';
 import 'package:pinksecret_front/src/features/home/ui/pages/new_order_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatelessWidget with HookMixin {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
     final height = MediaQuery.sizeOf(context).height;
-    final state = context.select(() => homeState.value);
-    final isMobile = deviceType.value == DeviceType.mobile;
+    final state = useAtomState(homeState);
+    final isMobile = deviceType.state == DeviceType.mobile;
     return Material(
       child: Row(
         children: [
@@ -23,7 +23,7 @@ class HomePage extends StatelessWidget {
           Container(
             height: height,
             width: width * 0.001,
-            color: Theme.of(context).colorScheme.surfaceVariant,
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
           ),
           Flexible(
             flex: 5,

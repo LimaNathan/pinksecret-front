@@ -19,7 +19,7 @@ class CustomDrawerButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = deviceType.value == DeviceType.mobile;
+    final isMobile = deviceType.state == DeviceType.mobile;
     final borderRadius = BorderRadius.circular(8);
     final colorScheme = Theme.of(context).colorScheme;
     return InkWell(

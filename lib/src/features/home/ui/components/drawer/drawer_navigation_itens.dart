@@ -7,15 +7,14 @@ import 'package:pinksecret_front/src/features/home/iteractor/atoms/home_atoms.da
 import 'package:pinksecret_front/src/features/home/iteractor/states/home_states.dart';
 import 'package:pinksecret_front/src/features/home/ui/components/drawer/drawer_button.dart';
 
-
-class DrawerNavigationItens extends StatelessWidget {
+class DrawerNavigationItens extends StatelessWidget with HookMixin {
   const DrawerNavigationItens({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = deviceType.value == DeviceType.mobile;
+    final isMobile = deviceType.state == DeviceType.mobile;
 
-    final state = context.select(() => homeState.value);
+    final state = useAtomState(homeState);
     final customHeight =
         isMobile ? MediaQuery.sizeOf(context).height * .02 : null;
     return Column(
@@ -39,7 +38,7 @@ class DrawerNavigationItens extends StatelessWidget {
           label: 'Venda',
           icon: Icons.sell,
           isSelected: state is ShopState,
-          selected: toShopAction,
+          selected: toShopAction.call,
         ),
       ],
     );

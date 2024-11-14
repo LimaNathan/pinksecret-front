@@ -10,10 +10,15 @@ class LoginForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     UserDTO user = UserDTO();
+    final height = MediaQuery.sizeOf(context).height;
+    final width = MediaQuery.sizeOf(context).width;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-      width: MediaQuery.sizeOf(context).width * .35,
-      height: MediaQuery.sizeOf(context).height,
+      padding: const EdgeInsets.symmetric(
+        horizontal: 30,
+        vertical: 15,
+      ),
+      width: width * .35,
+      height: height,
       child: Form(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -21,34 +26,24 @@ class LoginForm extends StatelessWidget {
         children: [
           Image.asset(ImageConstants.logoResumida),
           SizedBox(
-            height: MediaQuery.sizeOf(context).height * .2,
+            height: height * .2,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 TextFormField(
-                  onChanged: (value) {
-                    user.email = value;
-                  },
+                  onChanged: user.setEmail,
                   decoration: InputDecoration(
                     label: Text('Usuário'),
                   ),
                 ),
-                PasswordFormField(
-                  onChanged: (value) {
-                    user.password = value;
-                  },
-                ),
+                PasswordFormField(onChanged: user.setPassword),
               ],
             ),
           ),
           FilledButton(
-            onPressed: () {
-              loginAction.value = user;
-            },
-            child: Text(
-              'Entrar',
-            ),
+            onPressed: () => performLoginAction(user),
+            child: Text('Entrar'),
           ),
         ],
       )),

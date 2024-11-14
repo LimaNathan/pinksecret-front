@@ -8,6 +8,7 @@ import 'package:pinksecret_front/src/features/auth/interactor/atoms/auth_atoms.d
 import 'package:pinksecret_front/src/features/auth/interactor/states/auth_state.dart';
 import 'package:pinksecret_front/src/shared/theme/material-theme/color_schemes.g.dart';
 import 'package:pinksecret_front/src/shared/theme/material-theme/custom_color.g.dart';
+import 'package:pinksecret_front/src/shared/utils/constants/nav_key.dart';
 import 'package:pinksecret_front/src/shared/utils/constants/routes.dart';
 
 class AppWidget extends StatefulWidget {
@@ -21,32 +22,29 @@ class _AppWidgetState extends State<AppWidget> {
   @override
   void initState() {
     super.initState();
-    rxObserver(() => authState.value, effect: (state) async {
-      if (state is Unlogged) {
-        final message =
-            state.message ?? 'Você não está conectado, faça o login novamente.';
-        ScaffoldMessenger.of(context).showMaterialBanner(
-          MaterialBanner(
-            content: Text(message),
-            actions: const [],
-          ),
-        );
 
-        Modular.to.navigate('${Routes.auth}${Routes.login}');
-      } else if (state is Logged) {
-        Modular.to.navigate(Routes.home);
-      }
-    });
+    atomEffect(
+      (get) => get(authState),
+      effect: (value) {
+        if (value is Unlogged) {
+          Modular.to.navigate('${Routes.auth}${Routes.login}');
+        } else if (value is Logged) {
+          Modular.to.navigate(Routes.home);
+        }
+      },
+    ).call();
+
   }
 
   @override
   Widget build(BuildContext context) {
+    Modular.setNavigatorKey(NavKey.navKey);
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
         ColorScheme lightScheme;
         ColorScheme darkScheme;
 
-        deviceType.setValue(
+        setDeviceType(
           switch (MediaQuery.sizeOf(context).width) {
             < 600 => DeviceType.mobile,
             >= 600 && < 1200 => DeviceType.tablet,

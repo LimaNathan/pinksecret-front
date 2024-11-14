@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:asp/asp.dart';
 import 'package:flutter/material.dart';
 import 'package:pinksecret_front/src/features/auth/interactor/atoms/auth_atoms.dart';
@@ -13,10 +11,16 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage> with HookStateMixin {
   @override
   Widget build(BuildContext context) {
-    final state = context.select(() => authState.value);
+    final state = useAtomState(authState)
+      ..when(
+          init: () {},
+          unlogged: (unloggedState) {
+            ScaffoldMessenger.of(context).showMaterialBanner(
+                MaterialBanner(content: Text('teste'), actions: const []));
+          });
     return Material(
       child: state.when(
         init: () {

@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinksecret_front/src/features/home/iteractor/atoms/home_atoms.dart';
 
-class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
+class CustomAppbar extends StatelessWidget
+    with HookMixin
+    implements PreferredSizeWidget {
   final double size;
   const CustomAppbar({
     super.key,
@@ -14,9 +16,10 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.select(() => homeState.value);
+    // final state = context.select(() => homeState.value);
     final width = MediaQuery.sizeOf(context).width;
     final height = MediaQuery.sizeOf(context).height;
+    final state = useAtomState(homeState);
 
     var label = state.when(
       init: () => '',
@@ -30,7 +33,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
       bottom: PreferredSize(
         preferredSize: Size.fromHeight(0),
         child: Container(
-          color: Theme.of(context).colorScheme.surfaceVariant,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
           height: 1,
           width: width,
         ),
@@ -60,7 +63,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 height: height,
                 width: width * 0.001,
-                color: Theme.of(context).colorScheme.surfaceVariant,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
               ),
               CircleAvatar(
                 child: Icon(Icons.person),

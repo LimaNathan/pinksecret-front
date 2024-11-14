@@ -1,4 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+// ignore_for_file: public_member_api_docs, sort_constructors_first, deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinksecret_front/src/core/ui/components/custom_spacer.dart';
@@ -16,7 +16,7 @@ class NewOrderPage extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: colorScheme.surfaceVariant.withAlpha(40),
+            color: colorScheme.surfaceContainerHighest.withAlpha(40),
           ),
           height: height * .1,
           width: width,
@@ -64,12 +64,12 @@ class ChipNewOrderButton extends StatelessWidget {
   final bool isSelected;
   final IconData icon;
   const ChipNewOrderButton({
-    Key? key,
+    super.key,
     required this.label,
     required this.onPressed,
     required this.icon,
     required this.isSelected,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

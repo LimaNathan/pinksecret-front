@@ -15,6 +15,9 @@ class UserDTO {
     this.role,
   });
 
+  void setEmail(String newEmail) => email = newEmail;
+  void setPassword(String newPass) => password = newPass;
+
   Map<dynamic, dynamic> toMap() => <dynamic, dynamic>{
         'id': id,
         'name': name,

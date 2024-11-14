@@ -21,7 +21,7 @@ class UnoImpl implements ApiService {
 
   Future<Map<String, String>> _getBearer() async {
     final prefs = await SharedPreferences.getInstance();
-  
+
     final token = prefs.get(SharedPrefsKeys.token);
     if (token != null) {
       _headers.addAll({'Authorization': 'Bearer $token'});

@@ -14,6 +14,7 @@ class AuthServiceSpringImpl implements AuthServiceInterface {
   Future<AuthState> checkAuth() async {
     final prefs = await SharedPreferences.getInstance();
     try {
+      if (prefs.getString(SharedPrefsKeys.token) != null) return Unlogged();
       final response = await api.post(
         AuthEndpoints.checkToken,
         body: {
@@ -51,7 +52,12 @@ class AuthServiceSpringImpl implements AuthServiceInterface {
       if (response != null) {
         prefs.setString(SharedPrefsKeys.token, response.data['token']);
       }
-      return checkAuth();
+      return Logged(
+        Tokenization(
+          accessToken: response.data['token'],
+          refreshToken: response.data['refreshToken'],
+        ),
+      );
     } catch (e) {
       return Unlogged();
     }

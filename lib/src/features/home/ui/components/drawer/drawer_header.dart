@@ -9,7 +9,7 @@ class CustomDrawerHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = deviceType.value == DeviceType.mobile;
+    final isMobile = deviceType.state == DeviceType.mobile;
 
     return Center(
       child: OverflowBar(
