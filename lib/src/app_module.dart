@@ -1,10 +1,18 @@
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:pinksecret_front/src/core/service/api_service.dart';
+import 'package:pinksecret_front/src/core/service/dio/dio_api_impl.dart';
 import 'package:pinksecret_front/src/features/auth/auth_module.dart';
 import 'package:pinksecret_front/src/features/home/home_module.dart';
 import 'package:pinksecret_front/src/features/splash/ui/pages/splash_page.dart';
 import 'package:pinksecret_front/src/shared/utils/constants/routes.dart';
 
 class AppModule extends Module {
+  @override
+  void exportedBinds(Injector i) {
+    super.exportedBinds(i);
+    i.addSingleton<ApiService>(DioApiImpl.new);
+  }
+
   @override
   List<Module> get imports => [
         AuthModule(),
