@@ -1,5 +1,6 @@
 import 'package:asp/asp.dart';
 import 'package:flutter/material.dart';
+import 'package:pinksecret_front/src/core/ui/components/show_custom_notification.dart';
 import 'package:pinksecret_front/src/features/auth/interactor/atoms/auth_atoms.dart';
 import 'package:pinksecret_front/src/features/auth/ui/components/login_background.dart';
 import 'package:pinksecret_front/src/features/auth/ui/components/login_form.dart';
@@ -13,14 +14,30 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> with HookStateMixin {
   @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 2)).whenComplete(
+      verifyAuthAction.call,
+    );
+  }
+
+  void triggerNotification(BuildContext ctx) {
+    showCustomNotification(ctx, 'Você está deslogado.');
+  }
+
+  @override
   Widget build(BuildContext context) {
     final state = useAtomState(authState)
       ..when(
-          init: () {},
-          unlogged: (unloggedState) {
-            ScaffoldMessenger.of(context).showMaterialBanner(
-                MaterialBanner(content: Text('teste'), actions: const []));
+        init: () {},
+        unlogged: (state) {
+          // Força a exibição da notificação
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            triggerNotification(context);
           });
+        },
+      );
+
     return Material(
       child: state.when(
         init: () {
@@ -35,7 +52,7 @@ class _LoginPageState extends State<LoginPage> with HookStateMixin {
           return Container();
         },
         loading: (state) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         },

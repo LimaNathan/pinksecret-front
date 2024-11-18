@@ -41,7 +41,7 @@ class CustomDrawer extends StatelessWidget {
                   label: 'Logout',
                   isSelected: false,
                   selected: () {
-                    showAdaptiveDialog(
+                    showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
                         title: Text('Sair'),

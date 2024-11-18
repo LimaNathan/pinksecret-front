@@ -1,7 +1,6 @@
 import 'package:asp/asp.dart';
 import 'package:pinksecret_front/src/core/interactor/model/enum/device_type.dart';
 
-// final deviceType = Atom<DeviceType>(DeviceType.desktop);
 final deviceType = atom<DeviceType>(DeviceType.desktop);
 final setDeviceType = atomAction1<DeviceType>(
   (set, newValue) {

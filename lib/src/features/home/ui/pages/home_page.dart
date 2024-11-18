@@ -23,7 +23,7 @@ class HomePage extends StatelessWidget with HookMixin {
           Container(
             height: height,
             width: width * 0.001,
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            color: Theme.of(context).colorScheme.surfaceVariant,
           ),
           Flexible(
             flex: 5,

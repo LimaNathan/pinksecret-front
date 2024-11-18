@@ -33,7 +33,7 @@ class CustomAppbar extends StatelessWidget
       bottom: PreferredSize(
         preferredSize: Size.fromHeight(0),
         child: Container(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          color: Theme.of(context).colorScheme.surfaceVariant,
           height: 1,
           width: width,
         ),
@@ -63,7 +63,7 @@ class CustomAppbar extends StatelessWidget
                 ),
                 height: height,
                 width: width * 0.001,
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                color: Theme.of(context).colorScheme.surfaceVariant,
               ),
               CircleAvatar(
                 child: Icon(Icons.person),

@@ -16,7 +16,7 @@ class NewOrderPage extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: colorScheme.surfaceContainerHighest.withAlpha(40),
+            color: colorScheme.surfaceVariant.withAlpha(40),
           ),
           height: height * .1,
           width: width,

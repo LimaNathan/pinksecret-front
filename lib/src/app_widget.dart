@@ -20,38 +20,13 @@ class AppWidget extends StatefulWidget {
 
 class _AppWidgetState extends State<AppWidget> {
   @override
-  void initState() {
-    super.initState();
-
-    atomEffect(
-      (get) => get(authState),
-      effect: (value) {
-        if (value is Unlogged) {
-          Modular.to.navigate('${Routes.auth}${Routes.login}');
-        } else if (value is Logged) {
-          Modular.to.navigate(Routes.home);
-        }
-      },
-    ).call();
-
-  }
-
-  @override
   Widget build(BuildContext context) {
     Modular.setNavigatorKey(NavKey.navKey);
+
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
         ColorScheme lightScheme;
         ColorScheme darkScheme;
-
-        setDeviceType(
-          switch (MediaQuery.sizeOf(context).width) {
-            < 600 => DeviceType.mobile,
-            >= 600 && < 1200 => DeviceType.tablet,
-            >= 1200 => DeviceType.desktop,
-            _ => DeviceType.desktop,
-          },
-        );
 
         if (lightDynamic != null && darkDynamic != null) {
           lightScheme = lightDynamic.harmonized();
@@ -83,6 +58,30 @@ class _AppWidgetState extends State<AppWidget> {
         }
 
         return MaterialApp.router(
+          builder: (context, child) {
+            setDeviceType(
+              switch (MediaQuery.sizeOf(context).width) {
+                < 600 => DeviceType.mobile,
+                >= 600 && < 1200 => DeviceType.tablet,
+                >= 1200 => DeviceType.desktop,
+                _ => DeviceType.desktop,
+              },
+            );
+            atomEffect(
+              (get) => get(authState),
+              effect: (value) {
+                final currentRoute = Modular.to.path;
+                if (value is Unlogged &&
+                    currentRoute != '${Routes.auth}${Routes.login}') {
+                  Modular.to.navigate('${Routes.auth}${Routes.login}');
+                } else if (value is Logged && currentRoute != Routes.home) {
+                  Modular.to.navigate(Routes.home);
+                }
+              },
+            ).call();
+
+            return child ?? Container();
+          },
           debugShowCheckedModeBanner: false,
           themeMode: ThemeMode.light,
           title: 'Pink Secret',
