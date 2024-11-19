@@ -6,7 +6,6 @@ import 'package:pinksecret_front/src/shared/utils/constants/shared_prefs_keys.da
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DioApiImpl implements ApiService {
-  static const String _baseURL = String.fromEnvironment('base_url');
 
   static const String apiLogger = 'API';
   final _headers = <String, String>{};
@@ -15,10 +14,19 @@ class DioApiImpl implements ApiService {
 
   DioApiImpl() {
     _getBearer();
+
+    addHeaders({
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    });
+
     final dioOptions = BaseOptions(
-      baseUrl: _baseURL,
       headers: _headers,
     );
+
+    log('HEADERS: $_headers', name: apiLogger);
+
     _dio.options = dioOptions;
   }
 
@@ -84,7 +92,7 @@ class DioApiImpl implements ApiService {
         throw Exception();
       }
     } catch (e) {
-      log('error deleting data from api: $e', name: apiLogger);
+      log('$e', name: apiLogger);
     }
   }
 

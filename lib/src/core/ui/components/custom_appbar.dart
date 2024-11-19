@@ -25,7 +25,7 @@ class CustomAppbar extends StatelessWidget
       init: () => '',
       dashboard: (_) => 'Dashboard',
       shop: (_) => 'Nova venda',
-      storage: (_) => 'Estoque',
+      storage: (_) => 'Lista de todos os produtos',
     );
 
     return AppBar(

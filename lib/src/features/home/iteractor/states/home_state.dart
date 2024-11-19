@@ -1,10 +1,11 @@
 sealed class HomeState {
-  T when<T>(
-      {required T Function() init,
-      T Function(ShopState)? shop,
-      T Function(StorageState)? storage,
-      T Function(DashboardState)? dashboard,
-      T Function(FinancialState)? financial}) {
+  T when<T>({
+    required T Function() init,
+    T Function(ShopState)? shop,
+    T Function(StorageState)? storage,
+    T Function(DashboardState)? dashboard,
+    T Function(FinancialState)? financial,
+  }) {
     return switch (this) {
       InitalHomeState _ => init(),
       ShopState s => shop?.call(s) ?? init(),

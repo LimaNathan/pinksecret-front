@@ -1,7 +1,10 @@
 import 'package:asp/asp.dart';
-import 'package:pinksecret_front/src/features/home/iteractor/states/home_states.dart';
+import 'package:pinksecret_front/src/features/home/iteractor/states/home_state.dart';
 
-final homeState = atom<HomeState>(ShopState(), key: 'homeState');
+final homeState = atom<HomeState>(
+  StorageState(),
+  key: 'homeState',
+);
 
 final toShopAction = atomAction(
   (set) => set(
@@ -20,8 +23,7 @@ final toStorageAction = atomAction(
 final toDashboard = atomAction(
   (set) => set(
     homeState,
-    StorageState(),
+    DashboardState(),
   ),
   key: 'toDashboard',
 );
-

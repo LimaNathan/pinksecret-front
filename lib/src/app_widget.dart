@@ -18,7 +18,7 @@ class AppWidget extends StatefulWidget {
   State<AppWidget> createState() => _AppWidgetState();
 }
 
-class _AppWidgetState extends State<AppWidget> {
+class _AppWidgetState extends State<AppWidget> with HookStateMixin {
   @override
   Widget build(BuildContext context) {
     Modular.setNavigatorKey(NavKey.navKey);
@@ -46,6 +46,7 @@ class _AppWidgetState extends State<AppWidget> {
           required CustomColors customColors,
         }) {
           return ThemeData(
+            useMaterial3: true,
             inputDecorationTheme: InputDecorationTheme(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
@@ -67,7 +68,8 @@ class _AppWidgetState extends State<AppWidget> {
                 _ => DeviceType.desktop,
               },
             );
-            atomEffect(
+
+            useAtomEffect(
               (get) => get(authState),
               effect: (value) {
                 final currentRoute = Modular.to.path;
@@ -78,7 +80,7 @@ class _AppWidgetState extends State<AppWidget> {
                   Modular.to.navigate(Routes.home);
                 }
               },
-            ).call();
+            );
 
             return child ?? Container();
           },

@@ -12,11 +12,16 @@ final performLoginAction = atomAction1<UserDTO>((set, user) async {
   service.login(user).then((result) => set(authState, result));
 });
 
+
+
+
 final verifyAuthAction = atomAction((set) {
   final service = Modular.get<AuthServiceInterface>();
-  // set(authState, LoadingAuth());
   service.checkAuth().then((result) => set(authState, result));
 });
+
+
+
 
 final loggoutAction = atomAction((set) async {
   final service = Modular.get<AuthServiceInterface>();

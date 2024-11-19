@@ -7,12 +7,12 @@
       "type": "dart",
       "program": "lib/main.dart",
       "args": [
-        /* "-d",
-        "web-server",
-        "--web-hostname",
-        "0.0.0.0",
-        "--web-port",
-        "8888", */
+        "--web-renderer",
+        "html",
+        "-d",
+        "chrome",
+        "--web-browser-flag",
+        "--disable-web-security",
         "--dart-define-from-file=config.json"
       ]
     }

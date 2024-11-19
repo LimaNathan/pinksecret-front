@@ -21,10 +21,6 @@ class _LoginPageState extends State<LoginPage> with HookStateMixin {
     );
   }
 
-  void triggerNotification(BuildContext ctx) {
-    showCustomNotification(ctx, 'Você está deslogado.');
-  }
-
   @override
   Widget build(BuildContext context) {
     final state = useAtomState(authState)
@@ -32,9 +28,12 @@ class _LoginPageState extends State<LoginPage> with HookStateMixin {
         init: () {},
         unlogged: (state) {
           // Força a exibição da notificação
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            triggerNotification(context);
-          });
+          WidgetsBinding.instance.addPostFrameCallback(
+            (_) => showCustomNotification(
+              context,
+              'Nenhuma sessão ativa, faça o login novamente.',
+            ),
+          );
         },
       );
 

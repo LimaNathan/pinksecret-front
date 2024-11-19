@@ -10,6 +10,7 @@ dependencies:
   flutter_modular: 6.3.1
   uno: ^1.1.9
   asp: 2.0.0
+  font_awesome_flutter: ^10.8.0
   flutter:
     sdk: flutter
   flutter_svg: ^2.0.7
@@ -18,7 +19,7 @@ dependencies:
   google_fonts: 6.0.0
   flutter_animate: ^4.5.0
   dio: ^5.7.0
-
+  iconsax: ^0.0.8
   dio_smart_retry: ^6.0.0
 dev_dependencies:
   flutter_test:

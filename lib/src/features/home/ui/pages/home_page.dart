@@ -6,6 +6,7 @@ import 'package:pinksecret_front/src/core/ui/components/custom_appbar.dart';
 import 'package:pinksecret_front/src/features/home/iteractor/atoms/home_atoms.dart';
 import 'package:pinksecret_front/src/features/home/ui/components/drawer/custom_drawer.dart';
 import 'package:pinksecret_front/src/features/home/ui/pages/new_order_page.dart';
+import 'package:pinksecret_front/src/features/home/ui/pages/products_page.dart';
 
 class HomePage extends StatelessWidget with HookMixin {
   const HomePage({super.key});
@@ -37,12 +38,15 @@ class HomePage extends StatelessWidget with HookMixin {
                     ),
               body: state.when(
                 init: Container.new,
-                dashboard: (p0) {
+                dashboard: (_) {
                   return Center(
                     child: Text('Funcionalidade em desenvolvimento'),
                   );
                 },
-                shop: (p0) {
+                storage: (_) {
+                  return StoragePage();
+                },
+                shop: (_) {
                   return NewOrderPage();
                 },
               ),

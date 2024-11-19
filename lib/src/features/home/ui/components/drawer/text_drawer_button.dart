@@ -37,7 +37,7 @@ class TextDrawerButton extends StatelessWidget {
                   ),
                 ),
               ],
-        borderRadius: borderRadius,
+        // borderRadius: borderRadius,
         border: isSelected
             ? BorderDirectional(
                 bottom: BorderSide(
@@ -52,7 +52,9 @@ class TextDrawerButton extends StatelessWidget {
           Icon(
             icon,
             size: 16,
-            color: !isSelected ? null : colorScheme.tertiary,
+            color: !isSelected
+                ? colorScheme.onSurfaceVariant
+                : colorScheme.tertiary,
           ),
           CustomSpacer(),
           Flexible(

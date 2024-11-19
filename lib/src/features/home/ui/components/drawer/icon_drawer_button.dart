@@ -30,7 +30,6 @@ class IconDrawerButton extends StatelessWidget {
                   ),
                 ),
               ],
-        borderRadius: borderRadius,
         border: isSelected
             ? BorderDirectional(
                 bottom: BorderSide(

@@ -6,6 +6,7 @@ import 'package:pinksecret_front/src/features/auth/data/services/auth_service_sp
 import 'package:pinksecret_front/src/features/auth/interactor/service/auth_service_interface.dart';
 import 'package:pinksecret_front/src/features/home/home_module.dart';
 import 'package:pinksecret_front/src/features/splash/ui/pages/splash_page.dart';
+import 'package:pinksecret_front/src/shared/guards/auth_guard.dart';
 import 'package:pinksecret_front/src/shared/utils/constants/routes.dart';
 
 class AppModule extends Module {
@@ -30,6 +31,7 @@ class AppModule extends Module {
       ..module(
         Routes.home,
         module: HomeModule(),
+        guards: [AuthGuard()],
       );
   }
 }

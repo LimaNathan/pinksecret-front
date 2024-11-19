@@ -6,16 +6,14 @@ void showCustomNotification(BuildContext context, String message) {
 
   overlayEntry = OverlayEntry(
     builder: (context) => GestureDetector(
-      onTap: () =>
-          overlayEntry.remove(), // Usa overlayEntry após ele ser definido
+      onTap: () => overlayEntry.remove(),
       child: Stack(
         children: [
-          // Positioned.fill(
-          //   child: Container(
-          //     color: Colors.black54,
-          //   ),
-          // ),
-
+          Positioned.fill(
+            child: Container(
+              color: Colors.black12,
+            ),
+          ),
           Align(
             alignment: Alignment.topRight,
             child: CustomNotification(
