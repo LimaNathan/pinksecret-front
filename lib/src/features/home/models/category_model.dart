@@ -1,11 +1,11 @@
-class Category {
+class CategoriaModel {
   int? id;
   String? nome;
   String? descricao;
   String? dataCriacao;
   String? dataAtualizacao;
 
-  Category({
+  CategoriaModel({
     this.id,
     this.nome,
     this.descricao,
@@ -13,7 +13,7 @@ class Category {
     this.dataAtualizacao,
   });
 
-  Category.fromJson(Map<String, dynamic> json) {
+  CategoriaModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     nome = json['nome'];
     descricao = json['descricao'];

@@ -29,13 +29,24 @@ class TypeEndpoints {
   String typeByID(int id) => '$_baseURL/type/$id';
 }
 
+class CategoryEndpoints {
+  static const String _baseURL = String.fromEnvironment('base_url');
+
+  static const String fetchAll = '$_baseURL/api/categorias';
+  static const String fetchById = '$_baseURL/api/categorias';
+  static const String create = '$_baseURL/api/categorias';
+  static const String update = '$_baseURL/api/categorias';
+  static const String delete = '$_baseURL/api/categorias';
+}
+
 class ProductEndpoints {
   static const String _baseURL = String.fromEnvironment('base_url');
 
   ProductEndpoints._();
-  static const String all = '$_baseURL/product/all';
-  static const String create = '$_baseURL/product/create';
 
-  ///Can use to every product action with id, just need to change the HTTP verb
-  String productByID(int id) => '$_baseURL/product/$id';
+  static const String fetchAll = '$_baseURL/api/produtos';
+  static const String fetchById = '$_baseURL/api/produtos';
+  static const String create = '$_baseURL/api/produtos';
+  static const String update = '$_baseURL/api/produtos';
+  static const String delete = '$_baseURL/api/produtos';
 }
