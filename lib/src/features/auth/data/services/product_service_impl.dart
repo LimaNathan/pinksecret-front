@@ -21,7 +21,7 @@ class ProductServiceImpl implements ProductServiceInterface {
       if (response != null) {
         log('Produtos encontrados: ${response.data.length} produtos.',
             name: productLogger);
-        return ProductsLoaded(response.data
+        return ProductsLoaded((response.data as List)
             .map((product) => ProductModel.fromJson(product))
             .toList());
       }

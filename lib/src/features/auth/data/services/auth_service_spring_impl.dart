@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:pinksecret_front/src/core/service/api_service.dart';
 import 'package:pinksecret_front/src/features/auth/interactor/dto/user_dto.dart';
 import 'package:pinksecret_front/src/features/auth/interactor/entities/tokenization.dart';
@@ -49,17 +50,27 @@ class AuthServiceSpringImpl implements AuthServiceInterface {
         'senha': user.password,
       });
       final prefs = await SharedPreferences.getInstance();
+
       if (response != null) {
-        prefs.setString(SharedPrefsKeys.token, response.data['token']);
+        final token = response.data['token'];
+        final refreshToken = response.data['refreshToken'];
+
+        prefs.setString(SharedPrefsKeys.token, token);
+
+        api.addHeaders({'Authorization': 'Bearer $token'});
+
+        return Logged(
+          Tokenization(
+            accessToken: token,
+            refreshToken: refreshToken,
+          ),
+        );
+      } else {
+        return Unlogged();
       }
-      return Logged(
-        Tokenization(
-          accessToken: response.data['token'],
-          refreshToken: response.data['refreshToken'],
-        ),
-      );
-    } catch (e) {
-      return Unlogged();
+    } on DioException catch (e) {
+      return Unlogged(
+          message: e.error.toString().replaceAll('Exception: ', ''));
     }
   }
 }

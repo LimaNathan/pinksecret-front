@@ -6,10 +6,12 @@ class CustomNotification extends StatefulWidget {
   final String message;
   final Duration duration;
   final VoidCallback? onComplete;
+  final Color? color;
 
   const CustomNotification({
     super.key,
     required this.message,
+    this.color,
     this.duration = const Duration(seconds: 5),
     this.onComplete,
   });
@@ -121,9 +123,10 @@ class _CustomNotificationState extends State<CustomNotification>
                         padding: const EdgeInsets.all(16),
                         child: Text(
                           widget.message,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
+                            color: widget.color,
                           ),
                         ),
                       ),
@@ -136,7 +139,10 @@ class _CustomNotificationState extends State<CustomNotification>
                         ),
                         child: RotatedBox(
                           quarterTurns: 2,
-                          child: LinearProgressIndicator(value: progress),
+                          child: LinearProgressIndicator(
+                            value: progress,
+                            color: widget.color,
+                          ),
                         ),
                       ),
                     ],

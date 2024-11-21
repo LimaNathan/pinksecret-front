@@ -21,7 +21,7 @@ class AuthServiceIMPL implements AuthServiceInterface {
       if (token != null) {
         final response = await api.get(AuthEndpoints.checkToken);
         if (response.data['message'] != 'ok') return Unlogged();
-        
+
         return Logged(Tokenization(accessToken: token));
       } else {
         return Unlogged();
@@ -43,7 +43,7 @@ class AuthServiceIMPL implements AuthServiceInterface {
     try {
       final authorization =
           base64Encode(utf8.encode('${user.email}:${user.password}'));
-      api.addHeaders({'authorization': 'Basic $authorization'});
+      api.addHeaders({'Authorization': 'Bearer $authorization'});
       final response = await api.get(AuthEndpoints.login);
       final prefs = await SharedPreferences.getInstance();
       if (response != null) {

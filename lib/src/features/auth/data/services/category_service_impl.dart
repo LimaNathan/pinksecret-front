@@ -20,16 +20,16 @@ class CategoryServiceImpl implements CategoryServiceInterface {
       if (response != null) {
         log('Categorias encontradas: ${response.data.length} categorias.',
             name: categoryLogger);
-        return CategoriesLoaded(response.data
+        return CategoriesLoaded((response.data as List)
             .map((category) => CategoriaModel.fromJson(category))
             .toList());
       }
       log('Falha ao buscar categorias: resposta nula recebida da API.',
           name: categoryLogger);
       return CategoryError('Falha ao buscar categorias');
-    } catch (e) {
+    } on Exception catch (e) {
       log('Erro ao buscar categorias: $e', name: categoryLogger);
-      return CategoryError('Erro ao buscar categorias');
+      return CategoryError(e.toString().replaceAll('Exception: ', ''));
     }
   }
 

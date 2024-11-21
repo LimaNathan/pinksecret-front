@@ -1,11 +1,10 @@
 import 'dart:developer';
 
-import 'package:pinksecret_front/src/core/service/api_interceptor.dart';
 import 'package:dio/dio.dart';
+import 'package:pinksecret_front/src/core/service/api_interceptor.dart';
+import 'package:pinksecret_front/src/features/auth/interactor/atoms/auth_atoms.dart';
 
 class DioApiInteceptorImpl implements ApiInterceptor<Interceptor> {
-
-
   @override
   get interceptor => InterceptorsWrapper(
         onRequest: (options, handler) {
@@ -40,6 +39,7 @@ class DioApiInteceptorImpl implements ApiInterceptor<Interceptor> {
           }
           final statusCode = error.response?.statusCode;
           final errorMessage = _getMessage(error, statusCode);
+          if (statusCode == 401) loggoutAction.call();
 
           return handler.reject(
             DioException(
@@ -49,31 +49,38 @@ class DioApiInteceptorImpl implements ApiInterceptor<Interceptor> {
           );
         },
       );
-
   String _getMessage(DioException error, int? statusCode) {
-    final String? message = error.response?.data['detailMessage'];
+    final String? message = error.response?.data['message'];
+
     return switch (error.type) {
-      DioExceptionType.connectionTimeout =>
-        message ?? 'Erro: Tempo de conexão esgotado',
-      DioExceptionType.sendTimeout =>
-        message ?? 'Erro: Tempo de envio esgotado',
-      DioExceptionType.receiveTimeout =>
-        message ?? 'Erro: Tempo de resposta esgotado',
-      DioExceptionType.badCertificate =>
-        message ?? 'Erro: Certificado incorreto',
+      DioExceptionType.connectionTimeout => message ??
+          'Parece que a conexão está demorando mais do que o esperado. Tente novamente em alguns instantes.',
+      DioExceptionType.sendTimeout => message ??
+          'O envio dos dados demorou demais. Verifique sua conexão e tente novamente.',
+      DioExceptionType.receiveTimeout => message ??
+          'Não conseguimos obter uma resposta a tempo. Por favor, verifique sua conexão e tente novamente.',
+      DioExceptionType.badCertificate => message ??
+          'Houve um problema de segurança com o certificado. Tente mais tarde.',
       DioExceptionType.badResponse => switch (statusCode) {
-          400 => message ?? 'Erro 400: Requisição inválida',
-          401 => message ?? 'Erro 401: Não autorizado',
-          403 => message ?? 'Erro 403: Acesso proibido',
-          404 => message ?? 'Erro 404: Recurso não encontrado',
-          500 => message ?? 'Erro 500: Erro interno do servidor',
-          _ => message ?? 'Erro desconhecido: $statusCode',
+          400 => message ??
+              'A requisição não foi entendida. Verifique os dados e tente novamente.',
+          401 => message ??
+              'Você não tem permissão para acessar este recurso. Por favor, verifique suas credenciais.',
+          403 => message ??
+              'Você não tem acesso a esta área. Entre em contato com o suporte.',
+          404 => message ??
+              'Não encontramos o que você procurava. Pode ser que o recurso tenha sido removido ou não exista.',
+          500 => message ??
+              'Ocorreu um erro interno no servidor. Tente novamente mais tarde.',
+          _ => message ??
+              'Ocorreu um erro inesperado. Tente novamente ou entre em contato com o suporte.',
         },
-      DioExceptionType.cancel => message ?? 'Erro: Requisição cancelada',
-      DioExceptionType.connectionError =>
-        message ?? 'Erro: Problema de conexão ou outro erro de rede',
-      DioExceptionType.unknown =>
-        message ?? 'Erro desconhecido: ${error.error}',
+      DioExceptionType.cancel => message ??
+          'A requisição foi cancelada. Verifique sua conexão ou tente novamente.',
+      DioExceptionType.connectionError => message ??
+          'Houve um problema de conexão. Verifique sua internet e tente novamente.',
+      DioExceptionType.unknown => message ??
+          'Algo deu errado. Tente novamente ou entre em contato com o suporte.',
     };
   }
 }

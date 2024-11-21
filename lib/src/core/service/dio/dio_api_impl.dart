@@ -2,41 +2,44 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:pinksecret_front/src/core/service/api_service.dart';
+import 'package:pinksecret_front/src/core/service/dio/dio_api_inteceptor_impl.dart';
 import 'package:pinksecret_front/src/shared/utils/constants/shared_prefs_keys.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DioApiImpl implements ApiService {
-
   static const String apiLogger = 'API';
   final _headers = <String, String>{};
-
-  late final Dio _dio = Dio();
+  late final Dio _dio;
 
   DioApiImpl() {
     _getBearer();
 
-    addHeaders({
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    });
-
     final dioOptions = BaseOptions(
       headers: _headers,
     );
+    _dio = Dio();
+    addHeaders({'Accept': 'application/json'});
 
-    log('HEADERS: $_headers', name: apiLogger);
+    _dio.interceptors.add(DioApiInteceptorImpl().interceptor);
 
     _dio.options = dioOptions;
+
+    log('Cabeçalhos configurados: $_headers', name: apiLogger);
   }
 
   Future<Map<String, String>> _getBearer() async {
     final prefs = await SharedPreferences.getInstance();
-
     final token = prefs.get(SharedPrefsKeys.token);
+
     if (token != null) {
-      _headers.addAll({'Authorization': 'Bearer $token'});
+      addHeaders({'Authorization': 'Bearer $token'});
+      log('Token de autenticação encontrado e adicionado ao cabeçalho.',
+          name: apiLogger);
+    } else {
+      log('Nenhum token de autenticação encontrado. Cabeçalho de autorização não será adicionado.',
+          name: apiLogger);
     }
+
     return _headers;
   }
 
@@ -48,15 +51,23 @@ class DioApiImpl implements ApiService {
         queryParameters: {
           'id': '$id',
         },
+        options: Options(
+          headers: await _getBearer(),
+        ),
       );
 
       if (response.statusCode == 200) {
+        log('Requisição DELETE bem-sucedida. Status: ${response.statusCode}',
+            name: apiLogger);
         return response;
       } else {
-        throw Exception();
+        log('Falha ao deletar dados. Status da resposta: ${response.statusCode}',
+            name: apiLogger);
+        throw Exception('Falha ao deletar dados');
       }
     } catch (e) {
-      log('error deleting data from api: $e', name: apiLogger);
+      log('Erro ao tentar deletar dados da API: $e', name: apiLogger);
+      rethrow;
     }
   }
 
@@ -67,14 +78,26 @@ class DioApiImpl implements ApiService {
         url,
         queryParameters:
             (queryParams ?? <String, String>{}) as Map<String, String>,
+        options: Options(
+          headers: await _getBearer(),
+        ),
       );
+
       if (response.statusCode == 200) {
+        log('Requisição GET bem-sucedida. Status: ${response.statusCode}',
+            name: apiLogger);
         return response;
       } else {
-        throw Exception();
+        log('Falha ao obter dados. Status da resposta: ${response.statusCode}',
+            name: apiLogger);
+        throw Exception('Falha ao obter dados');
       }
+    } on DioException catch (e) {
+      log('Mensagem da API: ${e.error}', name: apiLogger);
+      throw Exception('${e.error}');
     } catch (e) {
-      log('error deleting data from api: $e', name: apiLogger);
+      log('Erro ao tentar obter dados da API: $e', name: apiLogger);
+      rethrow;
     }
   }
 
@@ -84,15 +107,23 @@ class DioApiImpl implements ApiService {
       final response = await _dio.post(
         url,
         data: body,
+        options: Options(
+          headers: await _getBearer(),
+        ),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        log('Requisição POST bem-sucedida. Status: ${response.statusCode}',
+            name: apiLogger);
         return response;
       } else {
-        throw Exception();
+        log('Falha ao enviar dados. Status da resposta: ${response.statusCode}',
+            name: apiLogger);
+        throw Exception('Falha ao enviar dados');
       }
     } catch (e) {
-      log('$e', name: apiLogger);
+      log('Erro ao tentar enviar dados para a API: $e', name: apiLogger);
+      rethrow;
     }
   }
 
@@ -102,19 +133,29 @@ class DioApiImpl implements ApiService {
       final response = await _dio.patch(
         url,
         data: body,
+        options: Options(
+          headers: await _getBearer(),
+        ),
       );
+
       if (response.statusCode == 200) {
+        log('Requisição PATCH bem-sucedida. Status: ${response.statusCode}',
+            name: apiLogger);
         return response;
       } else {
-        throw Exception();
+        log('Falha ao atualizar dados. Status da resposta: ${response.statusCode}',
+            name: apiLogger);
+        throw Exception('Falha ao atualizar dados');
       }
     } catch (e) {
-      log('error deleting data from api: $e', name: apiLogger);
+      log('Erro ao tentar atualizar dados na API: $e', name: apiLogger);
+      rethrow;
     }
   }
 
   @override
   Future<void> addHeaders(Map<String, String> headers) async {
     _headers.addAll(headers);
+    log('Cabeçalhos adicionais adicionados: $headers', name: apiLogger);
   }
 }
