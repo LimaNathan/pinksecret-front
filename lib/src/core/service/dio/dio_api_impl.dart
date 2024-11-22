@@ -76,8 +76,7 @@ class DioApiImpl implements ApiService {
     try {
       final response = await _dio.get(
         url,
-        queryParameters:
-            (queryParams ?? <String, String>{}) as Map<String, String>,
+        queryParameters: (queryParams ?? <String, String>{}),
         options: Options(
           headers: await _getBearer(),
         ),

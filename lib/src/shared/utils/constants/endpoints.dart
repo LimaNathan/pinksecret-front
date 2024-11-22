@@ -45,6 +45,7 @@ class ProductEndpoints {
   ProductEndpoints._();
 
   static const String fetchAll = '$_baseURL/api/produtos';
+  static const String fetchPage = '$_baseURL/api/produtos/page';
   static const String fetchById = '$_baseURL/api/produtos';
   static const String create = '$_baseURL/api/produtos';
   static const String update = '$_baseURL/api/produtos';

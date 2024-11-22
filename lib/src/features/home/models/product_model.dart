@@ -27,9 +27,9 @@ class ProductModel {
     nome = json['nome'];
     descricao = json['descricao'];
     preco = json['preco'];
-    quantidadeEstoque = json['quantidadeEstoque'];
+    quantidadeEstoque = json['quantidade'];
     categoria = json['categoria'] != null
-        ? CategoriaModel.fromJson(json['categoria'])
+        ? CategoriaModel.fromJson(Map.from(json['categoria']))
         : null;
     imagemProduto = json['imagemProduto'];
     dataCriacao = json['dataCriacao'];

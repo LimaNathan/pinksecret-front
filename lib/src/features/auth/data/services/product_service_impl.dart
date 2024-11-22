@@ -5,7 +5,6 @@ import 'package:pinksecret_front/src/features/auth/interactor/service/product_se
 import 'package:pinksecret_front/src/features/auth/interactor/states/product_state.dart';
 import 'package:pinksecret_front/src/features/home/models/create/create_product.dart';
 import 'package:pinksecret_front/src/features/home/models/product_model.dart';
-
 import 'package:pinksecret_front/src/shared/utils/constants/endpoints.dart';
 
 class ProductServiceImpl implements ProductServiceInterface {
@@ -111,6 +110,56 @@ class ProductServiceImpl implements ProductServiceInterface {
     } catch (e) {
       log('Erro ao excluir produto com ID $id: $e', name: productLogger);
       return ProductError('Erro ao excluir produto');
+    }
+  }
+
+  @override
+  @override
+  Future<ProductState> fetchPaginated(({int page, int size}) pageable) async {
+    final page = pageable.page;
+    final size = pageable.size;
+    try {
+      log('Iniciando a busca por produtos paginados (page: $page, size: $size)...',
+          name: productLogger);
+
+      // Adiciona os parâmetros de paginação à URL
+
+      final response = await api.get(
+        ProductEndpoints.fetchPage,
+        queryParams: {
+          'page': page,
+          'size': size,
+        },
+      );
+
+      if (response != null && response.data != null) {
+        final data = response.data;
+
+        // Verifica se o formato da resposta contém os metadados da página
+        if (data['content'] != null) {
+          log('Produtos encontrados: ${data['content'].length} produtos na página $page.',
+              name: productLogger);
+
+          return ProductsLoaded(
+              (data['content'] as List)
+                  .map((json) => ProductModel.fromJson(Map.from(json)))
+                  .toList(),
+              page: data['pageable']['pageNumber'],
+              totalPages: data['totalPages'],
+              totalProducts: data['totalElements']);
+        }
+
+        log('Falha ao buscar produtos: formato de resposta inesperado.',
+            name: productLogger);
+        return ProductError('Formato de resposta inesperado');
+      }
+
+      log('Falha ao buscar produtos: resposta nula recebida da API.',
+          name: productLogger);
+      return ProductError('Falha ao buscar produtos');
+    } catch (e) {
+      log('Erro ao buscar produtos: $e', name: productLogger);
+      return ProductError('Erro ao buscar produtos');
     }
   }
 }

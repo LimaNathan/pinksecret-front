@@ -1,6 +1,7 @@
 import 'package:asp/asp.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pinksecret_front/src/core/ui/components/custom_divider.dart';
 import 'package:pinksecret_front/src/features/home/iteractor/atoms/home_atoms.dart';
 
 class CustomAppbar extends StatelessWidget
@@ -16,9 +17,7 @@ class CustomAppbar extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    // final state = context.select(() => homeState.value);
     final width = MediaQuery.sizeOf(context).width;
-    final height = MediaQuery.sizeOf(context).height;
     final state = useAtomState(homeState);
 
     var label = state.when(
@@ -56,15 +55,7 @@ class CustomAppbar extends StatelessWidget
                   Icons.circle_notifications_rounded,
                 ),
               ),
-              Container(
-                margin: EdgeInsets.symmetric(
-                  horizontal: width * 0.01,
-                  vertical: height * 0.01,
-                ),
-                height: height,
-                width: width * 0.001,
-                color: Theme.of(context).colorScheme.surfaceVariant,
-              ),
+              CustomDivider(),
               CircleAvatar(
                 child: Icon(Icons.person),
               ),

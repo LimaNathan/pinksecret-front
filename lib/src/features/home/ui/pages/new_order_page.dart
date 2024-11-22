@@ -12,6 +12,7 @@ class NewOrderPage extends StatelessWidget {
     final height = MediaQuery.sizeOf(context).height;
     final colorScheme = Theme.of(context).colorScheme;
     return ListView(
+
       shrinkWrap: true,
       children: [
         Container(

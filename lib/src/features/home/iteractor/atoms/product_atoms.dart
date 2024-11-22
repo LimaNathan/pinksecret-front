@@ -13,6 +13,14 @@ final fetchProductsAction = atomAction((set) async {
         (result) => set(productState, result),
       );
 });
+final fetchProductsPaginatedAction = atomAction1((
+  set,
+  ({int page, int size}) pageable,
+) async {
+  final service = Modular.get<ProductServiceInterface>();
+  set(productState, LoadingProduct());
+  service.fetchPaginated(pageable).then((result) => set(productState, result));
+});
 
 final fetchProductByIdAction = atomAction1<int>((set, id) async {
   final service = Modular.get<ProductServiceInterface>();

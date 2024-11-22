@@ -7,4 +7,5 @@ abstract class ProductServiceInterface {
   Future<ProductState> deleteProduct(int id);
   Future<ProductState> fetchProducts();
   Future<ProductState> createProduct(CreateProduct newProduct);
+  Future<ProductState> fetchPaginated(({int page, int size}) pageable);
 }

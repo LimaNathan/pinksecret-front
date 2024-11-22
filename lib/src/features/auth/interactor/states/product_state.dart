@@ -22,7 +22,15 @@ class LoadingProduct extends ProductState {}
 
 class ProductsLoaded extends ProductState {
   final List<ProductModel> products;
-  ProductsLoaded(this.products);
+  final int? page;
+  final int? totalPages;
+  final int? totalProducts;
+  ProductsLoaded(
+    this.products, {
+    this.page,
+    this.totalPages,
+    this.totalProducts,
+  });
 }
 
 class ProductError extends ProductState {
