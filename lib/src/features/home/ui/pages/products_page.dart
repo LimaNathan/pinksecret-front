@@ -9,6 +9,7 @@ import 'package:pinksecret_front/src/core/ui/components/show_custom_notification
 import 'package:pinksecret_front/src/features/auth/interactor/states/product_state.dart';
 import 'package:pinksecret_front/src/features/home/iteractor/atoms/product_atoms.dart';
 import 'package:pinksecret_front/src/features/home/models/product_model.dart';
+import 'package:pinksecret_front/src/features/home/ui/components/dialogs/new_product_dialog.dart';
 import 'package:pinksecret_front/src/features/home/ui/components/statistic_tile.dart';
 
 class StoragePage extends StatefulWidget {
@@ -27,8 +28,6 @@ class _StoragePageState extends State<StoragePage> with HookStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
-    final height = MediaQuery.sizeOf(context).height;
     final productsState = useAtomState(productState)
       ..when(
         init: () {},
@@ -66,17 +65,7 @@ class _StoragePageState extends State<StoragePage> with HookStateMixin {
                     'Novo produto',
                     textAlign: TextAlign.center,
                   ),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      
-                      builder: (context) {
-                        return Card(
-                          child: Text('data'),
-                        );
-                      },
-                    );
-                  },
+                  onPressed: NewProductDialog.show,
                 ),
               ),
               ProductStatistics(currentState: currentState),
