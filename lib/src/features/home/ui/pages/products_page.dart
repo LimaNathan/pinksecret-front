@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:asp/asp.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pinksecret_front/src/core/interactor/atoms/core_atoms.dart';
+import 'package:pinksecret_front/src/core/interactor/model/enum/device_type.dart';
 import 'package:pinksecret_front/src/core/ui/components/custom_divider.dart';
 import 'package:pinksecret_front/src/core/ui/components/custom_spacer.dart';
 import 'package:pinksecret_front/src/core/ui/components/show_custom_loading.dart';
@@ -23,65 +27,108 @@ class _StoragePageState extends State<StoragePage> with HookStateMixin {
   @override
   void initState() {
     super.initState();
-    fetchProductsPaginatedAction.call((page: 0, size: 10));
+    fetchProductsPaginatedAction.call((page: 0, size: 6));
   }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
     final productsState = useAtomState(productState)
       ..when(
         init: () {},
-        loading: (_) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            LoadingOverlay.show(context);
-          });
-        },
-        loaded: (_) {
-          LoadingOverlay.hide();
-        },
+        loading: (_) => WidgetsBinding.instance
+            .addPostFrameCallback((_) => LoadingOverlay.show(context)),
+        loaded: (_) => LoadingOverlay.hide(),
         error: (state) {
           LoadingOverlay.hide();
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            showCustomNotification(
+          WidgetsBinding.instance.addPostFrameCallback(
+            (_) => showCustomNotification(
               context,
               message: state.message,
               color: Theme.of(context).colorScheme.error,
-            );
-          });
-        },
-      );
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary.withAlpha(10),
-      body: productsState.when(
-        init: () => null,
-        loaded: (ProductsLoaded currentState) {
-          return Column(
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: TextButton.icon(
-                  icon: Icon(FontAwesomeIcons.plus, size: 12),
-                  label: Text(
-                    'Novo produto',
-                    textAlign: TextAlign.center,
-                  ),
-                  onPressed: NewProductDialog.show,
-                ),
-              ),
-              ProductStatistics(currentState: currentState),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: currentState.products.length,
-                itemBuilder: (context, index) {
-                  return ProductTile(
-                    product: currentState.products[index],
-                  );
-                },
-              ),
-            ],
+            ),
           );
         },
-      ),
+      );
+    return productsState.when(
+      init: () {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Text(
+                  'Nenhum produto adicionado. Adicione um produto logo a baixo.'),
+              CustomSpacer(),
+              FloatingActionButton.extended(
+                onPressed: NewProductDialog.show,
+                label: Text('+ Novo Produto'),
+              ),
+            ],
+          ),
+        );
+      },
+      loaded: (ProductsLoaded currentState) {
+        return Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.primary.withAlpha(10),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: NewProductDialog.show,
+            label: Text('+ Novo Produto'),
+          ),
+          bottomNavigationBar: Padding(
+            padding: EdgeInsets.symmetric(
+              vertical: size.height * .05,
+              horizontal: size.height * .008,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                OutlinedButton(
+                  onPressed: (currentState.page! > 0)
+                      ? () {
+                          fetchProductsPaginatedAction.call(
+                            (page: currentState.page! - 1, size: 6),
+                          );
+                        }
+                      : null,
+                  child: Text('Anterior'),
+                ),
+                Text(
+                  'Pagina ${currentState.page! + 1} '
+                  'de ${currentState.totalPages}',
+                ),
+                OutlinedButton(
+                  onPressed:
+                      ((currentState.page! + 1) < currentState.totalPages!)
+                          ? () => fetchProductsPaginatedAction.call(
+                                (page: currentState.page! + 1, size: 6),
+                              )
+                          : null,
+                  child: Text('Próxima'),
+                ),
+              ],
+            ),
+          ),
+          body: currentState.products.isEmpty
+              ? Center(
+                  child: Text(
+                      'Nenhum produto adicionado. Adicione um produto logo a baixo.'),
+                )
+              : ListView(
+                  children: [
+                    ProductStatistics(currentState: currentState),
+                    ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: currentState.products.length,
+                      itemBuilder: (context, index) =>
+                          ProductTile(product: currentState.products[index]),
+                    ),
+                  ],
+                ),
+        );
+      },
     );
   }
 }
@@ -128,16 +175,15 @@ class ProductStatistics extends StatelessWidget {
   }
 }
 
-class ProductTile extends StatelessWidget {
-  const ProductTile({
-    super.key,
-    required this.product,
-  });
+class ProductTile extends StatelessWidget with HookMixin {
+  const ProductTile({super.key, required this.product});
 
   final ProductModel product;
 
   @override
   Widget build(BuildContext context) {
+    final deviceT = useAtomState(deviceType);
+
     final width = MediaQuery.sizeOf(context).width;
     final height = MediaQuery.sizeOf(context).height;
     return Container(
@@ -155,44 +201,68 @@ class ProductTile extends StatelessWidget {
         vertical: height * .005,
         horizontal: width * .005,
       ),
-      child: Row(
-        children: [
-          ProductTileImage(productModel: product),
-          CustomSpacer(),
-          ProductTileLabel(product: product),
-          Spacer(),
-          ProductTileItem(
-            label: 'Em estoque',
-            icon: Icon(
-              FontAwesomeIcons.boxOpen,
-              size: 14,
-              color: Theme.of(context).colorScheme.onBackground,
+      child: InkWell(
+        onTap: deviceT != DeviceType.desktop
+            ? () {
+                log('IS MOBILE CLICKED', name: 'ismobile');
+              }
+            : null,
+        child: Row(
+          children: [
+            ProductTileImage(productModel: product),
+            CustomSpacer(),
+            SizedBox(
+              width: width * .2,
+              child: ProductTileLabel(product: product),
             ),
-            content: '${product.quantidadeEstoque ?? 'n/a'}',
-          ),
-          ProductTileItem(
-            label: 'Preço do Produto',
-            content: product.preco?.toStringAsFixed(2) ?? 'n/a',
-            icon: Icon(
-              FontAwesomeIcons.dollarSign,
-              size: 14,
-              color: Theme.of(context).colorScheme.onBackground,
-            ),
-          ),
-          CustomSpacer(),
-          CustomDivider(height: height * .035),
-          Padding(
-            padding: EdgeInsets.only(right: width * .02),
-            child: IconButton(
-              onPressed: () {},
-              icon: Icon(
-                FontAwesomeIcons.pencil,
-                size: 18,
-                color: Theme.of(context).colorScheme.onBackground,
+            Spacer(),
+            Visibility(
+              visible: deviceT != DeviceType.mobile,
+              child: Row(
+                children: [
+                  ProductTileItem(
+                    label: 'Em estoque',
+                    icon: Icon(
+                      FontAwesomeIcons.boxOpen,
+                      size: 14,
+                      color: Theme.of(context).colorScheme.onBackground,
+                    ),
+                    content: '${product.quantidadeEstoque ?? 'n/a'}',
+                  ),
+                  ProductTileItem(
+                    label: 'Preço do Produto',
+                    content: product.preco?.toStringAsFixed(2) ?? 'n/a',
+                    icon: Icon(
+                      FontAwesomeIcons.dollarSign,
+                      size: 14,
+                      color: Theme.of(context).colorScheme.onBackground,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+            Visibility(
+              visible: deviceT == DeviceType.desktop,
+              child: Row(
+                children: [
+                  CustomSpacer(),
+                  CustomDivider(height: height * .035),
+                  Padding(
+                    padding: EdgeInsets.only(right: width * .02),
+                    child: IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        FontAwesomeIcons.pencil,
+                        size: 18,
+                        color: Theme.of(context).colorScheme.onBackground,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -214,6 +284,8 @@ class ProductTileLabel extends StatelessWidget {
       children: [
         Text(
           product.nome ?? 'n/a',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: GoogleFonts.nunito(
             fontSize: 20,
             fontWeight: FontWeight.w400,
@@ -222,6 +294,9 @@ class ProductTileLabel extends StatelessWidget {
         ),
         Text(
           product.descricao ?? 'n/a',
+          maxLines: 1,
+          softWrap: true,
+          overflow: TextOverflow.ellipsis,
           style: GoogleFonts.nunito(
             fontSize: 14,
             fontWeight: FontWeight.w200,
@@ -260,7 +335,7 @@ class ProductTileImage extends StatelessWidget {
   }
 }
 
-class ProductTileItem extends StatelessWidget {
+class ProductTileItem extends StatelessWidget with HookMixin {
   const ProductTileItem({
     required this.label,
     required this.content,
@@ -274,8 +349,24 @@ class ProductTileItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final deviceT = useAtomState(deviceType);
+
     final width = MediaQuery.sizeOf(context).width;
     final height = MediaQuery.sizeOf(context).height;
+
+    final children = [
+      icon,
+      CustomSpacer(),
+      Text(
+        content,
+        overflow: TextOverflow.ellipsis,
+        style: GoogleFonts.nunito(
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: Theme.of(context).colorScheme.onBackground,
+        ),
+      ),
+    ];
     return Row(
       children: [
         CustomSpacer(),
@@ -286,27 +377,28 @@ class ProductTileItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                label,
-                style: GoogleFonts.nunito(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w300,
-                  color: Theme.of(context).colorScheme.onBackground,
+              Visibility(
+                visible: deviceT == DeviceType.desktop,
+                child: Text(
+                  label,
+                  style: GoogleFonts.nunito(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w300,
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
                 ),
               ),
-              Row(
-                children: [
-                  icon,
-                  CustomSpacer(),
-                  Text(
-                    content,
-                    style: GoogleFonts.nunito(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      color: Theme.of(context).colorScheme.onBackground,
+              SizedBox(
+                width: width * .1,
+                child: switch (deviceT) {
+                  DeviceType.tablet => Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: children,
                     ),
-                  ),
-                ],
+                  _ => Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: children),
+                },
               ),
             ],
           ),

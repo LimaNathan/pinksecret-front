@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:pinksecret_front/src/core/service/api_service.dart';
 import 'package:pinksecret_front/src/core/service/dio/dio_api_inteceptor_impl.dart';
 import 'package:pinksecret_front/src/shared/utils/constants/shared_prefs_keys.dart';
@@ -20,7 +21,14 @@ class DioApiImpl implements ApiService {
     _dio = Dio();
     addHeaders({'Accept': 'application/json'});
 
-    _dio.interceptors.add(DioApiInteceptorImpl().interceptor);
+    _dio.interceptors
+      ..add(DioApiInteceptorImpl().interceptor)
+      ..add(RetryInterceptor(
+        dio: _dio,
+        retries: 3,
+        retryDelays: [Duration(seconds: 2)],
+        logPrint: (value) => log(value, name: 'RETRY INTERCEPTOR'),
+      ));
 
     _dio.options = dioOptions;
 

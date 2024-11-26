@@ -39,7 +39,7 @@ class DioApiInteceptorImpl implements ApiInterceptor<Interceptor> {
           }
           final statusCode = error.response?.statusCode;
           final errorMessage = _getMessage(error, statusCode);
-          if (statusCode == 401) loggoutAction.call();
+          if (statusCode == 401 || statusCode == 500) loggoutAction.call();
 
           return handler.reject(
             DioException(

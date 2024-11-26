@@ -31,7 +31,7 @@ final fetchProductByIdAction = atomAction1<int>((set, id) async {
 final createProductAction = atomAction1<CreateProduct>((set, product) async {
   final service = Modular.get<ProductServiceInterface>();
   set(productState, LoadingProduct());
-  service.createProduct(product).then((result) => set(productState, result));
+  service.createProduct(product).then((result) => fetchProductsAction.call());
 });
 
 final updateProductAction =

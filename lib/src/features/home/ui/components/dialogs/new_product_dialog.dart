@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:asp/asp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,13 +7,18 @@ import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pinksecret_front/src/core/interactor/atoms/core_atoms.dart';
+import 'package:pinksecret_front/src/core/interactor/model/enum/device_type.dart';
 import 'package:pinksecret_front/src/core/service/image_picker.dart';
 import 'package:pinksecret_front/src/core/ui/components/custom_spacer.dart';
+import 'package:pinksecret_front/src/core/ui/components/loading_component.dart';
+import 'package:pinksecret_front/src/core/ui/components/show_custom_notification.dart';
 import 'package:pinksecret_front/src/features/auth/interactor/states/category_state.dart';
 import 'package:pinksecret_front/src/features/home/iteractor/atoms/category_atoms.dart';
 import 'package:pinksecret_front/src/features/home/iteractor/atoms/product_atoms.dart';
 import 'package:pinksecret_front/src/features/home/models/category_model.dart';
 import 'package:pinksecret_front/src/features/home/models/create/create_product.dart';
+import 'package:pinksecret_front/src/shared/utils/constants/image_constants.dart';
 import 'package:pinksecret_front/src/shared/utils/constants/nav_key.dart';
 
 class NewProductDialog {
@@ -25,27 +32,41 @@ class NewProductDialog {
       thousandSeparator: '.',
     );
 
-    showDialog(
-      context: navContext,
-      builder: (context) {
-        return AlertDialog(
-          scrollable: true,
-          titlePadding: EdgeInsets.zero,
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: size.width * 0.02,
-            vertical: size.height * 0.01,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          title: _buildTitle(context),
-          content: _DialogContent(
-            size: size,
-            priceController: priceController,
-          ),
-        );
-      },
+    final child = _DialogContent(
+      size: size,
+      priceController: priceController,
     );
+
+    deviceType.state == DeviceType.desktop
+        ? showDialog(
+            context: navContext,
+            builder: (context) => AlertDialog(
+                  scrollable: true,
+                  titlePadding: EdgeInsets.zero,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: size.width * 0.02,
+                    vertical: size.height * 0.01,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  title: _buildTitle(context),
+                  content: child,
+                ))
+        : showModalBottomSheet(
+            context: navContext,
+            showDragHandle: true,
+            constraints: BoxConstraints(minHeight: size.height * .7),
+            builder: (context) => Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: size.width * 0.02,
+                vertical: size.height * 0.01,
+              ),
+              child: SingleChildScrollView(
+                child: child,
+              ),
+            ),
+          );
   }
 
   static Widget _buildTitle(BuildContext context) {
@@ -108,27 +129,47 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
   @override
   Widget build(BuildContext context) {
     final catState = useAtomState(categoryState);
+    final prodState = useAtomState(productState)
+      ..when(
+        init: () {},
+        created: Modular.to.pop,
+        error: (state) {
+          Modular.to.pop();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _buildImagePicker(),
-        CustomSpacer(customHeight: widget.size.height * 0.025),
-        _buildDetailsSection(context, catState),
-        CustomSpacer(customHeight: widget.size.height * 0.025),
-        ElevatedButton(
-          onPressed: () {
-            createProductAction(CreateProduct(
-              nome: productNameEC.text,
-              descricao: descriptionEC.text,
-              preco: double.tryParse(widget.priceController.text),
-              quantidade: int.tryParse(quantityEC.text),
-              categoria: selectedCategory!.id,
-            ));
-          },
-          child: Text('Criar novo produto'),
-        )
-      ],
+          WidgetsBinding.instance.addPostFrameCallback(
+              (_) => showCustomNotification(context, message: state.message));
+        },
+      );
+
+    return prodState.when(
+      loading: (_) => LoadingWithTypingEffect(
+        imagePath: ImageConstants.logoResumida,
+        imageSize: widget.size.width * .3,
+      ),
+      init: () => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildImagePicker(),
+          CustomSpacer(customHeight: widget.size.height * 0.025),
+          _buildDetailsSection(context, catState),
+          CustomSpacer(customHeight: widget.size.height * 0.025),
+          ElevatedButton(
+            onPressed: () {
+              createProductAction(CreateProduct(
+                nome: productNameEC.text,
+                descricao: descriptionEC.text,
+                preco: double.parse(widget.priceController.text
+                    .replaceAll('.', '')
+                    .replaceAll(',', '.')),
+                quantidade: int.tryParse(quantityEC.text),
+                categoria: selectedCategory!.id,
+                imagemProduto: image != null ? base64Encode(image!) : null,
+              ));
+            },
+            child: Text('Criar novo produto'),
+          )
+        ],
+      ),
     );
   }
 

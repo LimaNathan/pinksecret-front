@@ -6,9 +6,11 @@ sealed class ProductState {
     T Function(LoadingProduct state)? loading,
     T Function(ProductsLoaded state)? loaded,
     T Function(ProductError state)? error,
+    T Function()? created,
   }) {
     return switch (this) {
       InitialProduct _ => init(),
+      ProductCreated _ => created?.call() ?? init(),
       LoadingProduct s => loading?.call(s) ?? init(),
       ProductsLoaded s => loaded?.call(s) ?? init(),
       ProductError s => error?.call(s) ?? init(),
@@ -37,3 +39,5 @@ class ProductError extends ProductState {
   final String message;
   ProductError(this.message);
 }
+
+class ProductCreated extends ProductState {}

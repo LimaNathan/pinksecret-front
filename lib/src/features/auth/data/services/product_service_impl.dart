@@ -61,14 +61,16 @@ class ProductServiceImpl implements ProductServiceInterface {
       if (response != null) {
         log('Produto criado com sucesso: ${response.data}',
             name: productLogger);
-        return ProductsLoaded([ProductModel.fromJson(response.data)]);
+        return ProductCreated();
+
       }
       log('Falha ao criar produto: resposta nula recebida da API.',
           name: productLogger);
       return ProductError('Falha ao criar produto');
     } catch (e) {
       log('Erro ao criar produto: $e', name: productLogger);
-      return ProductError('Erro ao criar produto');
+      return ProductError(
+          'Erro ao criar produto: ${e.toString().replaceAll('Exception: ', '')}');
     }
   }
 
