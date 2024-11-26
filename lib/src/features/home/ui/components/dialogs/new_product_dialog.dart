@@ -38,7 +38,7 @@ class NewProductDialog {
     );
 
     deviceType.state == DeviceType.desktop
-        ? showDialog(
+        ? await showDialog(
             context: navContext,
             builder: (context) => AlertDialog(
                   scrollable: true,
@@ -53,7 +53,7 @@ class NewProductDialog {
                   title: _buildTitle(context),
                   content: child,
                 ))
-        : showModalBottomSheet(
+        : await showModalBottomSheet(
             context: navContext,
             showDragHandle: true,
             constraints: BoxConstraints(minHeight: size.height * .7),
@@ -165,6 +165,8 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
                 categoria: selectedCategory!.id,
                 imagemProduto: image != null ? base64Encode(image!) : null,
               ));
+              Modular.to.pop();
+              image = null;
             },
             child: Text('Criar novo produto'),
           )

@@ -24,6 +24,7 @@ class ProductModel {
 
   ProductModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+
     nome = json['nome'];
     descricao = json['descricao'];
     preco = json['preco'];
