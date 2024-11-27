@@ -10,30 +10,33 @@ class CustomDrawerHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMobile = deviceType.state == DeviceType.mobile;
+    final logoHeight = MediaQuery.sizeOf(context).height * 0.09;
 
     return Center(
-      child: OverflowBar(
-        alignment: MainAxisAlignment.center,
-        overflowAlignment: OverflowBarAlignment.center,
-        children: [
-          Image.asset(
-            ImageConstants.logoResumida,
-            height: MediaQuery.sizeOf(context).height * .09,
-          ),
-          Visibility(
-            visible: !isMobile,
-            child: Text(
-              'Pinksecret',
-              style: GoogleFonts.nunito(
-                textStyle: TextStyle(
-                  letterSpacing: 1.5,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w900,
+      child: Padding(
+        padding:
+            const EdgeInsets.all(8.0), // Padding para um melhor espaçamento
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              ImageConstants.logoResumida,
+              height: logoHeight,
+            ),
+            if (!isMobile)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  'Pinksecret',
+                  style: GoogleFonts.nunito(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.5,
+                  ),
                 ),
               ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -61,7 +61,7 @@ class TextDrawerButton extends StatelessWidget {
             child: Text(
               label,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.openSans(
+              style: GoogleFonts.inter(
                 color: !isSelected ? null : colorScheme.tertiary,
                 fontSize: 14,
               ),

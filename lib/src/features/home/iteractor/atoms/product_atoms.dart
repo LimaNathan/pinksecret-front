@@ -5,6 +5,8 @@ import 'package:pinksecret_front/src/features/auth/interactor/states/product_sta
 import 'package:pinksecret_front/src/features/home/models/create/create_product.dart';
 
 final productState = atom<ProductState>(InitialProduct(), key: 'productState');
+final createProductState =
+    atom<ProductState>(InitialProduct(), key: 'productState');
 
 final fetchProductsAction = atomAction((set) async {
   final service = Modular.get<ProductServiceInterface>();
@@ -30,11 +32,18 @@ final fetchProductByIdAction = atomAction1<int>((set, id) async {
 
 final createProductAction = atomAction1<CreateProduct>((set, product) async {
   final service = Modular.get<ProductServiceInterface>();
-  set(productState, LoadingProduct());
-  service
-      .createProduct(product)
-      .then((result) => fetchProductsPaginatedAction.call((page: 0, size: 6)));
+  set(createProductState, LoadingProduct());
+  service.createProduct(product).then((result) {
+    if (result is CreateProduct) {
+      return fetchProductsPaginatedAction.call((page: 0, size: 6));
+    } else {
+      set(createProductState, result);
+    }
+  });
 });
+
+final resetCreateProductStateAction =
+    atomAction((set) => set(createProductState, InitialProduct()));
 
 final updateProductAction =
     atomAction2<CreateProduct, int>((set, product, id) async {

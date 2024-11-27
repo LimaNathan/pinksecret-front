@@ -37,57 +37,67 @@ class NewProductDialog {
       priceController: priceController,
     );
 
-    deviceType.state == DeviceType.desktop
-        ? await showDialog(
-            context: navContext,
-            builder: (context) => AlertDialog(
-                  scrollable: true,
-                  titlePadding: EdgeInsets.zero,
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: size.width * 0.02,
-                    vertical: size.height * 0.01,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  title: _buildTitle(context),
-                  content: child,
-                ))
-        : await showModalBottomSheet(
-            context: navContext,
-            showDragHandle: true,
-            constraints: BoxConstraints(minHeight: size.height * .7),
-            builder: (context) => Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: size.width * 0.02,
-                vertical: size.height * 0.01,
-              ),
-              child: SingleChildScrollView(
-                child: child,
-              ),
-            ),
-          );
+    if (deviceType.state == DeviceType.desktop) {
+      await showDialog(
+        context: navContext,
+        builder: (context) => _Dialog(
+          size: size,
+          child: child,
+        ),
+      );
+    } else {
+      await showModalBottomSheet(
+        context: navContext,
+        showDragHandle: true,
+        constraints: BoxConstraints(minHeight: size.height * .7),
+        builder: (context) => Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: size.width * 0.02,
+            vertical: size.height * 0.01,
+          ),
+          child: SingleChildScrollView(child: child),
+        ),
+      );
+    }
+  }
+}
+
+class _Dialog extends StatelessWidget {
+  final Size size;
+  final Widget child;
+
+  const _Dialog({required this.size, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      scrollable: true,
+      titlePadding: EdgeInsets.zero,
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: size.width * 0.02,
+        vertical: size.height * 0.01,
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      title: _buildTitle(context),
+      content: child,
+    );
   }
 
-  static Widget _buildTitle(BuildContext context) {
+  Widget _buildTitle(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Row(
         children: [
           Text(
             'Novo Produto',
-            style: GoogleFonts.nunito(
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-            ),
+            style:
+                GoogleFonts.nunito(fontSize: 20, fontWeight: FontWeight.w500),
           ),
           Spacer(),
           IconButton(
             onPressed: Modular.to.pop,
-            icon: Icon(
-              FontAwesomeIcons.xmark,
-              color: Theme.of(context).colorScheme.primary,
-            ),
+            icon: Icon(FontAwesomeIcons.xmark,
+                color: Theme.of(context).colorScheme.primary),
           ),
         ],
       ),
@@ -99,10 +109,7 @@ class _DialogContent extends StatefulWidget {
   final Size size;
   final MoneyMaskedTextController priceController;
 
-  const _DialogContent({
-    required this.size,
-    required this.priceController,
-  });
+  const _DialogContent({required this.size, required this.priceController});
 
   @override
   State<_DialogContent> createState() => _DialogContentState();
@@ -114,6 +121,7 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
   final productNameEC = TextEditingController();
   final descriptionEC = TextEditingController();
   final quantityEC = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -129,15 +137,15 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
   @override
   Widget build(BuildContext context) {
     final catState = useAtomState(categoryState);
-    final prodState = useAtomState(productState)
+    final prodState = useAtomState(createProductState)
       ..when(
         init: () {},
         created: Modular.to.pop,
         error: (state) {
-          Modular.to.pop();
-
           WidgetsBinding.instance.addPostFrameCallback(
               (_) => showCustomNotification(context, message: state.message));
+
+          resetCreateProductStateAction();
         },
       );
 
@@ -146,33 +154,41 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
         imagePath: ImageConstants.logoResumida,
         imageSize: widget.size.width * .3,
       ),
-      init: () => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _buildImagePicker(),
-          CustomSpacer(customHeight: widget.size.height * 0.025),
-          _buildDetailsSection(context, catState),
-          CustomSpacer(customHeight: widget.size.height * 0.025),
-          ElevatedButton(
-            onPressed: () {
-              createProductAction(CreateProduct(
-                nome: productNameEC.text,
-                descricao: descriptionEC.text,
-                preco: double.parse(widget.priceController.text
-                    .replaceAll('.', '')
-                    .replaceAll(',', '.')),
-                quantidade: int.tryParse(quantityEC.text),
-                categoria: selectedCategory!.id,
-                imagemProduto: image != null ? base64Encode(image!) : null,
-              ));
-              Modular.to.pop();
-              image = null;
-            },
-            child: Text('Criar novo produto'),
-          )
-        ],
+      init: () => _buildForm(context, catState),
+    );
+  }
+
+  Widget _buildForm(BuildContext context, CategoryState categoryState) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildImagePicker(),
+        CustomSpacer(customHeight: widget.size.height * 0.025),
+        _buildDetailsSection(context, categoryState),
+        CustomSpacer(customHeight: widget.size.height * 0.025),
+        ElevatedButton(
+          onPressed: _createProduct,
+          child: Text('Criar novo produto'),
+        ),
+      ],
+    );
+  }
+
+  void _createProduct() {
+    createProductAction(
+      CreateProduct(
+        nome: productNameEC.text,
+        descricao: descriptionEC.text,
+        preco: double.tryParse(widget.priceController.text
+            .replaceAll('.', '')
+            .replaceAll(',', '.')),
+        quantidade: int.tryParse(quantityEC.text),
+        categoria: null, //selectedCategory!.id,
+        imagemProduto: image != null ? base64Encode(image!) : null,
       ),
     );
+    Modular.to.pop();
+    image = null;
   }
 
   Widget _buildImagePicker() {
@@ -186,17 +202,16 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
         child: SizedBox(
           height: widget.size.height * 0.2,
           child: Center(
-            child: image != null
-                ? Image.memory(image!)
-                : Icon(
-                    FontAwesomeIcons.folderPlus,
-                    size: 40,
-                    color: Colors.grey,
-                  ),
+            child:
+                image != null ? Image.memory(image!) : _buildImagePlaceholder(),
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildImagePlaceholder() {
+    return Icon(FontAwesomeIcons.folderPlus, size: 40, color: Colors.grey);
   }
 
   Widget _buildDetailsSection(
@@ -204,102 +219,92 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildTextField(
-          controller: productNameEC,
-          label: 'Nome do produto',
-          hint: 'Ex.: Calcinha de renda, sutiã sem bojo...',
-        ),
+        _buildTextField(productNameEC, 'Nome do produto',
+            'Ex.: Calcinha de renda, sutiã sem bojo...'),
         CustomSpacer(customHeight: widget.size.height * 0.025),
-        _buildTextField(
-          controller: descriptionEC,
-          label: 'Descrição do produto',
-          hint: 'Breve descrição do produto (opcional)',
-        ),
+        _buildTextField(descriptionEC, 'Descrição do produto',
+            'Breve descrição do produto (opcional)'),
         CustomSpacer(customHeight: widget.size.height * 0.025),
-        categoryState.when(
-          init: () => const CircularProgressIndicator(),
-          loaded: (state) {
-            final categories = state.categories;
-            return Visibility(
-              visible: categories.isNotEmpty,
-              child: DropdownButtonFormField<CategoriaModel>(
-                value: selectedCategory,
-                onChanged: (newValue) {
-                  selectedCategory = newValue!;
-                },
-                items: categories.map((category) {
-                  return DropdownMenuItem<CategoriaModel>(
-                    value: category,
-                    child: Text(category.nome ?? 'n/a'),
-                  );
-                }).toList(),
-                decoration: InputDecoration(
-                  helperText: 'Selecione uma categoria',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            );
-          },
-          error: (state) => Text(
-            'Erro: ${state.message}',
-            style: TextStyle(color: Theme.of(context).colorScheme.error),
-          ),
-        ),
+        _buildCategoryDropdown(categoryState),
         CustomSpacer(customHeight: widget.size.height * 0.025),
-        Row(
-          children: [
-            Expanded(
-              child: _buildNumberField(
-                label: 'Quantidade do produto',
-                hint: '0',
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                controller: quantityEC,
-              ),
-            ),
-            SizedBox(width: 16),
-            Expanded(
-              child: _buildNumberField(
-                label: 'Preço do produto (unidade)',
-                hint: '0,00',
-                prefixText: 'R\$ ',
-                controller: widget.priceController,
-              ),
-            ),
-          ],
-        ),
+        _buildNumberFields(),
       ],
     );
   }
 
   Widget _buildTextField(
-      {required String label,
-      required String hint,
-      required TextEditingController controller}) {
+      TextEditingController controller, String label, String hint) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
-        helperText: label,
+        labelText: label,
         hintText: hint,
       ),
     );
   }
 
-  Widget _buildNumberField({
-    required String label,
-    required String hint,
-    String? prefixText,
-    List<TextInputFormatter>? inputFormatters,
-    TextEditingController? controller,
-  }) {
+  Widget _buildNumberField(String label, String hint,
+      {String? prefixText,
+      List<TextInputFormatter>? inputFormatters,
+      TextEditingController? controller}) {
     return TextFormField(
       controller: controller,
       keyboardType: TextInputType.number,
       inputFormatters: inputFormatters,
       decoration: InputDecoration(
-        helperText: label,
+        labelText: label,
         hintText: hint,
         prefixText: prefixText,
       ),
+    );
+  }
+
+  Widget _buildCategoryDropdown(CategoryState categoryState) {
+    return categoryState.when(
+      init: () => Center(child: const CircularProgressIndicator()),
+      error: (state) => Text(
+        'Erro: ${state.message}',
+        style: TextStyle(color: Theme.of(context).colorScheme.error),
+      ),
+      loaded: (state) {
+        final categories = state.categories;
+        return Visibility(
+          visible: categories.isNotEmpty,
+          child: DropdownButtonFormField<CategoriaModel>(
+            hint: Text(
+              'Selecione uma categoria.',
+              style: GoogleFonts.inter(color: Colors.black54),
+            ),
+            value: selectedCategory,
+            onChanged: (categoria) =>
+                setState(() => selectedCategory = categoria),
+            items: categories
+                .map((category) => DropdownMenuItem<CategoriaModel>(
+                      value: category,
+                      child: Text(category.nome ?? 'n/a',
+                          style: GoogleFonts.inter()),
+                    ))
+                .toList(),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildNumberFields() {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildNumberField('Quantidade do produto', '0',
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              controller: quantityEC),
+        ),
+        SizedBox(width: 16),
+        Expanded(
+          child: _buildNumberField('Preço do produto (unidade)', '0,00',
+              prefixText: 'R\$ ', controller: widget.priceController),
+        ),
+      ],
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:asp/asp.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:pinksecret_front/src/core/interactor/atoms/core_atoms.dart';
 import 'package:pinksecret_front/src/core/interactor/model/enum/device_type.dart';
 import 'package:pinksecret_front/src/features/auth/interactor/atoms/auth_atoms.dart';
@@ -46,15 +47,116 @@ class _AppWidgetState extends State<AppWidget> with HookStateMixin {
           required CustomColors customColors,
         }) {
           return ThemeData(
-            useMaterial3: true,
-            inputDecorationTheme: InputDecorationTheme(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                gapPadding: 5,
-              ),
-            ),
             colorScheme: colorScheme,
             extensions: [customColors],
+            useMaterial3: true,
+            textTheme: TextTheme(
+              bodyLarge: GoogleFonts.inter(),
+              bodyMedium: GoogleFonts.inter(),
+            ),
+            dropdownMenuTheme: DropdownMenuThemeData(
+              inputDecorationTheme: InputDecorationTheme(
+                filled: true,
+                fillColor: Colors.grey[100],
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.transparent),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.transparent),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Color(0xFFA03C4C), width: 1.5),
+                ),
+              ),
+            ),
+            inputDecorationTheme: InputDecorationTheme(
+              labelStyle: GoogleFonts.inter(
+                color: Colors.black54,
+                fontWeight: FontWeight.w400,
+              ),
+              hintStyle: GoogleFonts.inter(
+                color: Colors.black38,
+                fontWeight: FontWeight.w300,
+              ),
+              filled: true,
+              fillColor: Colors.grey[100],
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.transparent),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.transparent),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Color(0xFFA03C4C), width: 1.5),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.error, width: 1.5),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.error.withOpacity(0.5),
+                    width: 1.5),
+              ),
+            ),
+            buttonTheme: ButtonThemeData(
+              buttonColor: Color(0xFFA03C4C), // Cor de fundo do botão
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFFA03C4C), // Cor de fundo
+                foregroundColor: Colors.white, // Cor do texto
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                elevation: 3, // Sombra
+                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                textStyle: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                backgroundColor: Color(0xFFA03C4C), // Cor do texto
+                textStyle: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            outlinedButtonTheme: OutlinedButtonThemeData(
+              style: OutlinedButton.styleFrom(
+                // backgroundColor: Color(0xFFA03C4C), // Cor do texto
+                side: BorderSide(color: Color(0xFFA03C4C), width: 1),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+
+                textStyle: GoogleFonts.inter(
+                  color: Color(0xFFFFFFFF),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
           );
         }
 

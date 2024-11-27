@@ -13,55 +13,52 @@ class CustomDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMobile = deviceType.state == DeviceType.mobile;
+    final paddingHorizontal = MediaQuery.sizeOf(context).width * 0.02;
+    final drawerWidth = MediaQuery.sizeOf(context).width * 0.2;
 
     return Container(
-      padding: EdgeInsets.only(
-        left: MediaQuery.sizeOf(context).width * .02,
-        right: MediaQuery.sizeOf(context).width * .01,
-      ),
-      width: MediaQuery.sizeOf(context).width * .2,
+      padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
+      width: drawerWidth,
       child: Column(
         crossAxisAlignment:
             isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
         children: [
-          CustomDrawerHeader(),
-          Padding(
-            padding: EdgeInsets.zero,
-            child: Divider(),
-          ),
-          DrawerNavigationItens(),
+          const CustomDrawerHeader(),
+          const Divider(),
+          const DrawerNavigationItens(),
           Spacer(),
-          Padding(
-            padding:
-                EdgeInsets.only(bottom: MediaQuery.sizeOf(context).width * .02),
-            child: Column(
-              children: [
-                CustomDrawerButton(
-                  icon: Icons.logout,
-                  label: 'Logout',
-                  isSelected: false,
-                  selected: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text('Sair'),
-                        content: Text('Deseja mesmo encerrar a sua sessão?'),
-                        actions: [
-                          TextButton(
-                            onPressed: Modular.to.pop,
-                            child: Text('Não'),
-                          ),
-                          TextButton(
-                            onPressed: loggoutAction.call,
-                            child: Text('Sim'),
-                          )
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
+          _buildLogoutButton(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLogoutButton(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.sizeOf(context).width * 0.02),
+      child: CustomDrawerButton(
+        icon: Icons.logout,
+        label: 'Logout',
+        isSelected: false,
+        selected: () => _showLogoutDialog(context),
+      ),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Sair'),
+        content: const Text('Deseja mesmo encerrar a sua sessão?'),
+        actions: [
+          TextButton(
+            onPressed: Modular.to.pop,
+            child: const Text('Não'),
+          ),
+          TextButton(
+            onPressed: loggoutAction.call,
+            child: const Text('Sim'),
           ),
         ],
       ),

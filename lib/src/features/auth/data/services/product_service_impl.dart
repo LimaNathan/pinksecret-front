@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:pinksecret_front/src/core/service/api_service.dart';
 import 'package:pinksecret_front/src/features/auth/interactor/service/product_service_interface.dart';
 import 'package:pinksecret_front/src/features/auth/interactor/states/product_state.dart';
@@ -62,15 +63,15 @@ class ProductServiceImpl implements ProductServiceInterface {
         log('Produto criado com sucesso: ${response.data}',
             name: productLogger);
         return ProductCreated();
-
       }
       log('Falha ao criar produto: resposta nula recebida da API.',
           name: productLogger);
       return ProductError('Falha ao criar produto');
-    } catch (e) {
-      log('Erro ao criar produto: $e', name: productLogger);
-      return ProductError(
-          'Erro ao criar produto: ${e.toString().replaceAll('Exception: ', '')}');
+    } on DioException catch (e) {
+      log('Erro ao criar produto: ${e.error}', name: productLogger);
+
+      return ProductError('Erro ao criar produto: '
+          '${e.error.toString().replaceAll('Exception: ', '')}');
     }
   }
 
@@ -124,8 +125,6 @@ class ProductServiceImpl implements ProductServiceInterface {
       log('Iniciando a busca por produtos paginados (page: $page, size: $size)...',
           name: productLogger);
 
-      // Adiciona os parâmetros de paginação à URL
-
       final response = await api.get(
         ProductEndpoints.fetchPage,
         queryParams: {
@@ -137,7 +136,6 @@ class ProductServiceImpl implements ProductServiceInterface {
       if (response != null && response.data != null) {
         final data = response.data;
 
-        // Verifica se o formato da resposta contém os metadados da página
         if (data['content'] != null) {
           log('Produtos encontrados: ${data['content'].length} produtos na página $page.',
               name: productLogger);

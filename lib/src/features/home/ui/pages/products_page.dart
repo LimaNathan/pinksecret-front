@@ -111,9 +111,9 @@ class _StoragePageState extends State<StoragePage> with HookStateMixin {
                   ),
                 ),
                 Text(
-                  'Pagina ${currentState.page! + 1} '
+                  'Pág. ${currentState.page! + 1} '
                   'de ${currentState.totalPages}',
-                  style: GoogleFonts.openSans(),
+                  style: GoogleFonts.inter(),
                 ),
                 Visibility(
                   visible: deviceT != DeviceType.mobile,
@@ -220,7 +220,7 @@ class ProductTile extends StatelessWidget with HookMixin {
       largeSize: 30,
       label: Text(
         'Novo',
-        style: GoogleFonts.openSans(
+        style: GoogleFonts.inter(
           fontSize: 16,
           color: Theme.of(context).colorScheme.onTertiaryContainer,
         ),
@@ -377,8 +377,13 @@ class ProductTileImage extends StatelessWidget {
               FontAwesomeIcons.image,
               color: Theme.of(context).colorScheme.primary,
             )
-          : Image.memory(base64Decode(productModel.imagemProduto!),
-              fit: BoxFit.contain),
+          : Padding(
+              padding: EdgeInsets.all(width * .0055),
+              child: Image.memory(
+                base64Decode(productModel.imagemProduto!),
+                fit: BoxFit.contain,
+              ),
+            ),
     );
   }
 }

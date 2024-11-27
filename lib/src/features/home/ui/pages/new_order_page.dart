@@ -12,7 +12,6 @@ class NewOrderPage extends StatelessWidget {
     final height = MediaQuery.sizeOf(context).height;
     final colorScheme = Theme.of(context).colorScheme;
     return ListView(
-
       shrinkWrap: true,
       children: [
         Container(
@@ -95,7 +94,7 @@ class ChipNewOrderButton extends StatelessWidget {
           CustomSpacer(),
           Text(
             label,
-            style: GoogleFonts.openSans(
+            style: GoogleFonts.inter(
               fontSize: 12,
               color: colorScheme.onTertiaryContainer,
             ),

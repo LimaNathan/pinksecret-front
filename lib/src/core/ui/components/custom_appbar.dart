@@ -69,14 +69,14 @@ class CustomAppbar extends StatelessWidget
                   children: [
                     Text(
                       'Nome',
-                      style: GoogleFonts.openSans(
+                      style: GoogleFonts.inter(
                         fontWeight: FontWeight.w700,
                         fontSize: 10,
                       ),
                     ),
                     Text(
                       'Cargo',
-                      style: GoogleFonts.openSans(
+                      style: GoogleFonts.inter(
                         fontWeight: FontWeight.w400,
                         fontSize: 8,
                       ),

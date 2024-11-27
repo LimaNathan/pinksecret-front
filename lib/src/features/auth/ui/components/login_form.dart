@@ -41,10 +41,8 @@ class LoginForm extends StatelessWidget {
               ],
             ),
           ),
-          FilledButton(
-            onPressed: () {
-              performLoginAction(user);
-            },
+          ElevatedButton(
+            onPressed: () => performLoginAction(user),
             child: Text('Entrar'),
           ),
         ],

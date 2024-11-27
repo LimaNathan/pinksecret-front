@@ -1,8 +1,11 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:pinksecret_front/src/core/service/api_interceptor.dart';
+import 'package:pinksecret_front/src/core/ui/components/show_custom_notification.dart';
 import 'package:pinksecret_front/src/features/auth/interactor/atoms/auth_atoms.dart';
+import 'package:pinksecret_front/src/shared/utils/constants/nav_key.dart';
 
 class DioApiInteceptorImpl implements ApiInterceptor<Interceptor> {
   @override
@@ -39,7 +42,16 @@ class DioApiInteceptorImpl implements ApiInterceptor<Interceptor> {
           }
           final statusCode = error.response?.statusCode;
           final errorMessage = _getMessage(error, statusCode);
-          if (statusCode == 401 || statusCode == 500) loggoutAction.call();
+          if (statusCode == 401) {
+            WidgetsBinding.instance.addPostFrameCallback(
+              (_) => showCustomNotification(
+                NavKey.navKey.currentState!.context,
+                message: 'Sua sessão foi encerrada, faça o login novamente.',
+              ),
+            );
+
+            loggoutAction.call();
+          }
 
           return handler.reject(
             DioException(
@@ -50,7 +62,13 @@ class DioApiInteceptorImpl implements ApiInterceptor<Interceptor> {
         },
       );
   String _getMessage(DioException error, int? statusCode) {
-    final String? message = error.response?.data['message'];
+    String? message = error.response?.data['message'];
+
+    if (error.response?.data.containsKey('errors')) {
+      for (var element in error.response!.data['errors']) {
+        message = '$message $element';
+      }
+    }
 
     return switch (error.type) {
       DioExceptionType.connectionTimeout => message ??

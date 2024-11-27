@@ -9,6 +9,7 @@ class CustomDrawerButton extends StatelessWidget {
   final String label;
   final bool isSelected;
   final Function() selected;
+
   const CustomDrawerButton({
     super.key,
     required this.icon,
@@ -20,28 +21,27 @@ class CustomDrawerButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMobile = deviceType.state == DeviceType.mobile;
-    final borderRadius = BorderRadius.circular(8);
     final colorScheme = Theme.of(context).colorScheme;
+    final borderRadius = BorderRadius.circular(8);
+
     return InkWell(
       splashColor: colorScheme.tertiaryContainer,
       borderRadius: borderRadius,
       onTap: selected,
-      child: Visibility(
-        visible: !isMobile,
-        replacement: IconDrawerButton(
-          isSelected: isSelected,
-          colorScheme: colorScheme,
-          borderRadius: borderRadius,
-          icon: icon,
-        ),
-        child: TextDrawerButton(
-          isSelected: isSelected,
-          colorScheme: colorScheme,
-          borderRadius: borderRadius,
-          icon: icon,
-          label: label,
-        ),
-      ),
+      child: isMobile
+          ? IconDrawerButton(
+              isSelected: isSelected,
+              colorScheme: colorScheme,
+              borderRadius: borderRadius,
+              icon: icon,
+            )
+          : TextDrawerButton(
+              isSelected: isSelected,
+              colorScheme: colorScheme,
+              borderRadius: borderRadius,
+              icon: icon,
+              label: label,
+            ),
     );
   }
 }

@@ -28,7 +28,7 @@ class StatisticTile extends StatelessWidget {
         RichText(
           text: TextSpan(
             text: primaryInfo,
-            style: GoogleFonts.openSans(
+            style: GoogleFonts.inter(
               fontSize: 20,
               fontWeight: FontWeight.w400,
               color: Theme.of(context).colorScheme.primary,
@@ -36,7 +36,7 @@ class StatisticTile extends StatelessWidget {
             children: [
               TextSpan(
                 text: secondaryInfo,
-                style: GoogleFonts.openSans(
+                style: GoogleFonts.inter(
                   fontSize: 11,
                 ),
               )

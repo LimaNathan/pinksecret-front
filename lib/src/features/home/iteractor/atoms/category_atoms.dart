@@ -3,12 +3,14 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:pinksecret_front/src/features/auth/interactor/service/category_service_interface.dart';
 import 'package:pinksecret_front/src/features/auth/interactor/states/category_state.dart';
 import 'package:pinksecret_front/src/features/home/models/create/create_category.dart';
+
 final categoryState =
     atom<CategoryState>(InitialCategory(), key: 'categoryState');
 
 final fetchCategoriesAction = atomAction((set) async {
   final service = Modular.get<CategoryServiceInterface>();
   set(categoryState, LoadingCategory());
+
   service.fetchCategories().then((result) => set(categoryState, result));
 });
 
