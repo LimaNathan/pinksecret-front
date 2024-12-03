@@ -13,64 +13,37 @@ class DrawerNavigationItens extends StatelessWidget with HookMixin {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = deviceType.state == DeviceType.mobile;
+    final deviceT = useAtomState(deviceType);
+
     final state = useAtomState(homeState);
+    final customHeight = deviceT == DeviceType.mobile
+        ? MediaQuery.sizeOf(context).height * .02
+        : null;
 
     return Column(
       children: [
         CustomSpacer(),
-        ..._buildDrawerButtons(context, state, isMobile),
+        CustomDrawerButton(
+          label: 'Dashboard',
+          icon: FontAwesomeIcons.chartLine,
+          isSelected: state is DashboardState,
+          selected: toDashboard.call,
+        ),
+        CustomSpacer(customHeight: customHeight),
+        CustomDrawerButton(
+          label: 'Produtos',
+          icon: FontAwesomeIcons.bagShopping,
+          isSelected: state is StorageState,
+          selected: toStorageAction.call,
+        ),
+        CustomSpacer(customHeight: customHeight),
+        CustomDrawerButton(
+          label: 'Venda',
+          icon: FontAwesomeIcons.cartShopping,
+          isSelected: state is ShopState,
+          selected: toShopAction.call,
+        ),
       ],
     );
   }
-
-  List<Widget> _buildDrawerButtons(
-      BuildContext context, HomeState state, bool isMobile) {
-    final buttons = [
-      _DrawerButtonConfig(
-        'Dashboard',
-        FontAwesomeIcons.chartLine,
-        state is DashboardState,
-        toDashboard.call,
-      ),
-      _DrawerButtonConfig(
-        'Produtos',
-        FontAwesomeIcons.bagShopping,
-        state is StorageState,
-        toStorageAction.call,
-      ),
-      _DrawerButtonConfig(
-        'Venda',
-        FontAwesomeIcons.cartShopping,
-        state is ShopState,
-        toShopAction.call,
-      ),
-    ];
-
-    final customHeight =
-        isMobile ? MediaQuery.sizeOf(context).height * .02 : null;
-
-    return buttons.map((config) {
-      return Column(
-        children: [
-          CustomDrawerButton(
-            label: config.label,
-            icon: config.icon,
-            isSelected: config.isSelected,
-            selected: config.selected,
-          ),
-          if (customHeight != null) CustomSpacer(customHeight: customHeight),
-        ],
-      );
-    }).toList();
-  }
-}
-
-class _DrawerButtonConfig {
-  final String label;
-  final IconData icon;
-  final bool isSelected;
-  final Function() selected;
-
-  _DrawerButtonConfig(this.label, this.icon, this.isSelected, this.selected);
 }
