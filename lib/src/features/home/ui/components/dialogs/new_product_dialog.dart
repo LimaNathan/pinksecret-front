@@ -17,6 +17,7 @@ import 'package:pinksecret_front/src/features/auth/interactor/states/category_st
 import 'package:pinksecret_front/src/features/home/iteractor/atoms/category_atoms.dart';
 import 'package:pinksecret_front/src/features/home/iteractor/atoms/product_atoms.dart';
 import 'package:pinksecret_front/src/features/home/models/category_model.dart';
+import 'package:pinksecret_front/src/features/home/models/create/create_category.dart';
 import 'package:pinksecret_front/src/features/home/models/create/create_product.dart';
 import 'package:pinksecret_front/src/shared/utils/constants/image_constants.dart';
 import 'package:pinksecret_front/src/shared/utils/constants/nav_key.dart';
@@ -139,6 +140,18 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
   @override
   Widget build(BuildContext context) {
     final catState = useAtomState(categoryState);
+
+    final creatCategoryState = useAtomState(createCategoryState)
+      ..when(
+        init: () {},
+        error: (state) {
+          WidgetsBinding.instance.addPostFrameCallback(
+              (_) => showCustomNotification(context, message: state.message));
+
+          resetCategoryStateAction();
+          fetchCategoriesAction();
+        },
+      );
     final prodState = useAtomState(createProductState)
       ..when(
         init: () {},
@@ -157,16 +170,19 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
         imageSize: widget.size.width * .3,
       ),
       init: () => _buildForm(context, catState),
+      error: (state) {
+        return Container();
+      },
     );
   }
 
-  Widget _buildForm(BuildContext context, CategoryState categoryState) {
+  Widget _buildForm(BuildContext context, CategoryState catState) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _buildImagePicker(),
         CustomSpacer(customHeight: widget.size.height * 0.025),
-        _buildDetailsSection(context, categoryState),
+        _buildDetailsSection(context, catState),
         CustomSpacer(customHeight: widget.size.height * 0.025),
         ElevatedButton(
           onPressed: _createProduct,
@@ -216,8 +232,12 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
     return Icon(FontAwesomeIcons.folderPlus, size: 40, color: Colors.grey);
   }
 
-  Widget _buildDetailsSection(
-      BuildContext context, CategoryState categoryState) {
+  Widget _buildDetailsSection(BuildContext context, CategoryState catState) {
+    final size = MediaQuery.of(context).size;
+
+    final categoryNameController = TextEditingController();
+    final categoryDescriptionController = TextEditingController();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -227,15 +247,83 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
         _buildTextField(descriptionEC, 'Descrição do produto',
             'Breve descrição do produto (opcional)'),
         CustomSpacer(customHeight: widget.size.height * 0.025),
-        _buildCategoryDropdown(categoryState),
+        _buildCategoryDropdown(catState),
         CustomSpacer(customHeight: widget.size.height * 0.015),
         TextButton(
           onPressed: () {
             showDialog(
               context: context,
-              builder: (context) {
-                return Dialog();
-              },
+              builder: (context) => AlertDialog(
+                titlePadding: EdgeInsets.zero,
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: size.width * 0.02,
+                  vertical: size.height * 0.01,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                title: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Nova Categoria',
+                        style: GoogleFonts.nunito(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Spacer(),
+                      IconButton(
+                        onPressed: Modular.to.pop,
+                        icon: Icon(
+                          FontAwesomeIcons.xmark,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildTextField(
+                      categoryNameController,
+                      'Nome da categoria',
+                      'O nome que será exibido ao selecionar uma categoria.',
+                    ),
+                    CustomSpacer(),
+                    _buildTextField(
+                      categoryDescriptionController,
+                      'Descrição',
+                      'Breve descrição da categoria.',
+                    ),
+                    CustomSpacer(
+                      customHeight: size.height * .025,
+                    ),
+                    ElevatedButton(
+                        onPressed: () {
+                          Modular.to.pop();
+                          if (categoryNameController.text.isEmpty) {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              showCustomNotification(context,
+                                  message:
+                                      'O nome da categoria deve ser preenchido.');
+                            });
+                          } else {
+                            createCategoryAction(
+                              CreateCategory(
+                                descricao: categoryDescriptionController.text,
+                                nome: categoryNameController.text,
+                              ),
+                            );
+                          }
+                        },
+                        child: Text('Criar nova categoria')),
+                  ],
+                ),
+              ),
             );
           },
           child: Text('Nova Categoria'),
@@ -273,11 +361,11 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
     );
   }
 
-  Widget _buildCategoryDropdown(CategoryState categoryState) {
-    return categoryState.when(
+  Widget _buildCategoryDropdown(CategoryState catState) {
+    return catState.when(
       init: () => Center(child: const CircularProgressIndicator()),
       error: (state) => Text(
-        'Erro: ${state.message}',
+        'Houve um erro ao carregar as categorias.',
         style: TextStyle(color: Theme.of(context).colorScheme.error),
       ),
       loaded: (state) {

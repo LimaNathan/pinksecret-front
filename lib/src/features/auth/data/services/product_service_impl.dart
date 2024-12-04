@@ -28,6 +28,11 @@ class ProductServiceImpl implements ProductServiceInterface {
       log('Falha ao buscar produtos: resposta nula recebida da API.',
           name: productLogger);
       return ProductError('Falha ao buscar produtos');
+    } on DioException catch (e) {
+      log('Erro ao buscar produtos: ${e.error}', name: productLogger);
+
+      return ProductError('Erro ao buscar produtos: '
+          '${e.error.toString().replaceAll('Exception: ', '')}');
     } catch (e) {
       log('Erro ao buscar produtos: $e', name: productLogger);
       return ProductError('Erro ao buscar produtos');
@@ -47,6 +52,11 @@ class ProductServiceImpl implements ProductServiceInterface {
       log('Falha ao buscar produto com ID $id: resposta nula.',
           name: productLogger);
       return ProductError('Falha ao buscar produto');
+    } on DioException catch (e) {
+      log('Erro ao buscar produto: ${e.error}', name: productLogger);
+
+      return ProductError('Erro ao buscar produto por id {$id}: '
+          '${e.error.toString().replaceAll('Exception: ', '')}');
     } catch (e) {
       log('Erro ao buscar produto com ID $id: $e', name: productLogger);
       return ProductError('Erro ao buscar produto');
@@ -92,6 +102,11 @@ class ProductServiceImpl implements ProductServiceInterface {
       log('Falha ao atualizar produto com ID $id: resposta nula recebida da API.',
           name: productLogger);
       return ProductError('Falha ao atualizar produto');
+    } on DioException catch (e) {
+      log('Erro ao atualizar produto: ${e.error}', name: productLogger);
+
+      return ProductError('Erro ao atualizar produto: '
+          '${e.error.toString().replaceAll('Exception: ', '')}');
     } catch (e) {
       log('Erro ao atualizar produto com ID $id: $e', name: productLogger);
       return ProductError('Erro ao atualizar produto');
@@ -110,6 +125,11 @@ class ProductServiceImpl implements ProductServiceInterface {
       log('Falha ao excluir produto com ID $id: resposta da API não foi bem-sucedida.',
           name: productLogger);
       return ProductError('Falha ao excluir produto');
+    } on DioException catch (e) {
+      log('Erro ao criar produto: ${e.error}', name: productLogger);
+
+      return ProductError('Erro ao criar produto: '
+          '${e.error.toString().replaceAll('Exception: ', '')}');
     } catch (e) {
       log('Erro ao excluir produto com ID $id: $e', name: productLogger);
       return ProductError('Erro ao excluir produto');
@@ -157,6 +177,11 @@ class ProductServiceImpl implements ProductServiceInterface {
       log('Falha ao buscar produtos: resposta nula recebida da API.',
           name: productLogger);
       return ProductError('Falha ao buscar produtos');
+    } on DioException catch (e) {
+      log('Erro ao criar produto: ${e.error}', name: productLogger);
+
+      return ProductError('Erro ao criar produto: '
+          '${e.error.toString().replaceAll('Exception: ', '')}');
     } catch (e) {
       log('Erro ao buscar produtos: $e', name: productLogger);
       return ProductError('Erro ao buscar produtos');
