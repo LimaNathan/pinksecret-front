@@ -270,6 +270,7 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
         final categories = state.categories;
         return Visibility(
           visible: categories.isNotEmpty,
+          replacement: Text(''),
           child: DropdownButtonFormField<CategoriaModel>(
             hint: Text(
               'Selecione uma categoria.',

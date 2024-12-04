@@ -32,7 +32,7 @@ class CustomAppbar extends StatelessWidget
       bottom: PreferredSize(
         preferredSize: Size.fromHeight(0),
         child: Container(
-          color: Theme.of(context).colorScheme.surfaceVariant,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
           height: 1,
           width: width,
         ),

@@ -26,7 +26,7 @@ class _CustomDividerState extends State<CustomDivider> {
       ),
       height: (widget.height ?? height),
       width: (widget.width ?? width) * 0.001,
-      color: Theme.of(context).colorScheme.surfaceVariant,
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
     );
   }
 }

@@ -64,7 +64,8 @@ class DioApiInteceptorImpl implements ApiInterceptor<Interceptor> {
   String _getMessage(DioException error, int? statusCode) {
     String? message = error.response?.data['message'];
 
-    if (error.response?.data.containsKey('errors')) {
+    if (error.response?.data.containsKey('errors') &&
+        error.response?.data['errors'] != null) {
       for (var element in error.response!.data['errors']) {
         message = '$message $element';
       }

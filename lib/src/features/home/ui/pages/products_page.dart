@@ -234,7 +234,7 @@ class ProductTile extends StatelessWidget with HookMixin {
           border: Border.symmetric(
             horizontal: BorderSide(
               width: 0.1,
-              color: Theme.of(context).colorScheme.surfaceVariant,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
             ),
           ),
         ),
@@ -266,7 +266,7 @@ class ProductTile extends StatelessWidget with HookMixin {
                       icon: Icon(
                         FontAwesomeIcons.boxOpen,
                         size: 14,
-                        color: Theme.of(context).colorScheme.onBackground,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                       content: '${product.quantidadeEstoque ?? 'n/a'}',
                     ),
@@ -276,7 +276,7 @@ class ProductTile extends StatelessWidget with HookMixin {
                       icon: Icon(
                         FontAwesomeIcons.dollarSign,
                         size: 14,
-                        color: Theme.of(context).colorScheme.onBackground,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   ],
@@ -295,7 +295,7 @@ class ProductTile extends StatelessWidget with HookMixin {
                         icon: Icon(
                           FontAwesomeIcons.pencil,
                           size: 18,
-                          color: Theme.of(context).colorScheme.onBackground,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -331,7 +331,7 @@ class ProductTileLabel extends StatelessWidget {
           style: GoogleFonts.nunito(
             fontSize: 20,
             fontWeight: FontWeight.w400,
-            color: Theme.of(context).colorScheme.onBackground,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         Text(
@@ -342,7 +342,7 @@ class ProductTileLabel extends StatelessWidget {
           style: GoogleFonts.nunito(
             fontSize: 14,
             fontWeight: FontWeight.w200,
-            color: Theme.of(context).colorScheme.onBackground,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ],
@@ -368,7 +368,7 @@ class ProductTileImage extends StatelessWidget {
         vertical: width * .005,
       ),
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceVariant,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12)),
       width: height * .09,
       height: height * .09,
@@ -416,7 +416,7 @@ class ProductTileItem extends StatelessWidget with HookMixin {
         style: GoogleFonts.nunito(
           fontSize: 16,
           fontWeight: FontWeight.w400,
-          color: Theme.of(context).colorScheme.onBackground,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
     ];
@@ -437,7 +437,7 @@ class ProductTileItem extends StatelessWidget with HookMixin {
                   style: GoogleFonts.nunito(
                     fontSize: 18,
                     fontWeight: FontWeight.w300,
-                    color: Theme.of(context).colorScheme.onBackground,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),

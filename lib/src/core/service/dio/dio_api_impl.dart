@@ -25,7 +25,7 @@ class DioApiImpl implements ApiService {
       ..add(DioApiInteceptorImpl().interceptor)
       ..add(RetryInterceptor(
         dio: _dio,
-        retries: 3,
+        retries: 2,
         retryDelays: [Duration(seconds: 2)],
         logPrint: (value) => log(value, name: 'RETRY INTERCEPTOR'),
       ));
