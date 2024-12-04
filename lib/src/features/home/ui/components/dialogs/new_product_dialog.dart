@@ -83,21 +83,23 @@ class _Dialog extends StatelessWidget {
     );
   }
 
-  Widget _buildTitle(BuildContext context) {
+  Widget _buildTitle(BuildContext context, {String? title}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Row(
         children: [
           Text(
-            'Novo Produto',
+            title ?? 'Novo Produto',
             style:
                 GoogleFonts.nunito(fontSize: 20, fontWeight: FontWeight.w500),
           ),
           Spacer(),
           IconButton(
             onPressed: Modular.to.pop,
-            icon: Icon(FontAwesomeIcons.xmark,
-                color: Theme.of(context).colorScheme.primary),
+            icon: Icon(
+              FontAwesomeIcons.xmark,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
         ],
       ),
@@ -217,7 +219,7 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
   Widget _buildDetailsSection(
       BuildContext context, CategoryState categoryState) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         _buildTextField(productNameEC, 'Nome do produto',
             'Ex.: Calcinha de renda, sutiã sem bojo...'),
@@ -226,6 +228,18 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
             'Breve descrição do produto (opcional)'),
         CustomSpacer(customHeight: widget.size.height * 0.025),
         _buildCategoryDropdown(categoryState),
+        CustomSpacer(customHeight: widget.size.height * 0.015),
+        TextButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return Dialog();
+              },
+            );
+          },
+          child: Text('Nova Categoria'),
+        ),
         CustomSpacer(customHeight: widget.size.height * 0.025),
         _buildNumberFields(),
       ],

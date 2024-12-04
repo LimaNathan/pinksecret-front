@@ -134,7 +134,6 @@ class _AppWidgetState extends State<AppWidget> with HookStateMixin {
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                backgroundColor: Color(0xFFA03C4C), // Cor do texto
                 textStyle: GoogleFonts.inter(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
