@@ -6,8 +6,6 @@ import 'package:pinksecret_front/src/features/home/models/create/create_category
 
 final categoryState =
     atom<CategoryState>(InitialCategory(), key: 'categoryState');
-final createCategoryState =
-    atom<CategoryState>(InitialCategory(), key: 'categoryState');
 
 final fetchCategoriesAction = atomAction((set) async {
   final service = Modular.get<CategoryServiceInterface>();
@@ -17,7 +15,7 @@ final fetchCategoriesAction = atomAction((set) async {
 });
 
 final resetCategoryStateAction = atomAction(
-  (set) => set(createCategoryState, InitialCategory()),
+  (set) => set(categoryState, InitialCategory()),
 );
 
 final fetchCategoryByIdAction = atomAction1<int>((set, id) async {
@@ -28,10 +26,15 @@ final fetchCategoryByIdAction = atomAction1<int>((set, id) async {
 
 final createCategoryAction = atomAction1<CreateCategory>((set, category) async {
   final service = Modular.get<CategoryServiceInterface>();
-  set(createCategoryState, LoadingCategory());
-  service
-      .createCategory(category)
-      .then((result) => set(createCategoryState, result));
+  set(categoryState, LoadingCategory());
+  service.createCategory(category).then((result) {
+    set(categoryState, result);
+
+    if (result is! CategoryError) {
+      set(categoryState, InitialCategory());
+      fetchCategoriesAction();
+    }
+  });
 });
 
 final updateCategoryAction =

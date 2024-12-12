@@ -71,6 +71,11 @@ class DioApiInteceptorImpl implements ApiInterceptor<Interceptor> {
       }
     }
 
+    if (statusCode == 409) {
+      message =
+          message?.split('=').last.replaceAll('(', '"').replaceAll(')', '"');
+    }
+
     return switch (error.type) {
       DioExceptionType.connectionTimeout => message ??
           'Parece que a conexão está demorando mais do que o esperado. Tente novamente em alguns instantes.',
@@ -91,6 +96,8 @@ class DioApiInteceptorImpl implements ApiInterceptor<Interceptor> {
               'Não encontramos o que você procurava. Pode ser que o recurso tenha sido removido ou não exista.',
           500 => message ??
               'Ocorreu um erro interno no servidor. Tente novamente mais tarde.',
+          409 => message ??
+              'Houve um conflito nos dados informados, revise a sua requisição e tente novamente.',
           _ => message ??
               'Ocorreu um erro inesperado. Tente novamente ou entre em contato com o suporte.',
         },

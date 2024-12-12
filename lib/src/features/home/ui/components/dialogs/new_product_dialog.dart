@@ -13,20 +13,18 @@ import 'package:pinksecret_front/src/core/service/image_picker.dart';
 import 'package:pinksecret_front/src/core/ui/components/custom_spacer.dart';
 import 'package:pinksecret_front/src/core/ui/components/loading_component.dart';
 import 'package:pinksecret_front/src/core/ui/components/show_custom_notification.dart';
-import 'package:pinksecret_front/src/features/auth/interactor/states/category_state.dart';
 import 'package:pinksecret_front/src/features/home/iteractor/atoms/category_atoms.dart';
 import 'package:pinksecret_front/src/features/home/iteractor/atoms/product_atoms.dart';
 import 'package:pinksecret_front/src/features/home/models/category_model.dart';
 import 'package:pinksecret_front/src/features/home/models/create/create_category.dart';
 import 'package:pinksecret_front/src/features/home/models/create/create_product.dart';
 import 'package:pinksecret_front/src/shared/utils/constants/image_constants.dart';
-import 'package:pinksecret_front/src/shared/utils/constants/nav_key.dart';
 
 class NewProductDialog {
   NewProductDialog._();
 
-  static Future<void> show({BuildContext? context}) async {
-    final navContext = context ?? NavKey.navKey.currentState!.context;
+  static Future<void> show({required BuildContext context}) async {
+    final navContext = context;
     final size = MediaQuery.sizeOf(navContext);
     final priceController = MoneyMaskedTextController(
       decimalSeparator: ',',
@@ -139,19 +137,6 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final catState = useAtomState(categoryState);
-
-    final creatCategoryState = useAtomState(createCategoryState)
-      ..when(
-        init: () {},
-        error: (state) {
-          WidgetsBinding.instance.addPostFrameCallback(
-              (_) => showCustomNotification(context, message: state.message));
-
-          resetCategoryStateAction();
-          fetchCategoriesAction();
-        },
-      );
     final prodState = useAtomState(createProductState)
       ..when(
         init: () {},
@@ -169,20 +154,20 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
         imagePath: ImageConstants.logoResumida,
         imageSize: widget.size.width * .3,
       ),
-      init: () => _buildForm(context, catState),
-      error: (state) {
-        return Container();
-      },
+      init: () => _buildForm(context),
+      error: (state) => Container(),
     );
   }
 
-  Widget _buildForm(BuildContext context, CategoryState catState) {
+  Widget _buildForm(
+    BuildContext context,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _buildImagePicker(),
         CustomSpacer(customHeight: widget.size.height * 0.025),
-        _buildDetailsSection(context, catState),
+        _buildDetailsSection(context),
         CustomSpacer(customHeight: widget.size.height * 0.025),
         ElevatedButton(
           onPressed: _createProduct,
@@ -232,7 +217,7 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
     return Icon(FontAwesomeIcons.folderPlus, size: 40, color: Colors.grey);
   }
 
-  Widget _buildDetailsSection(BuildContext context, CategoryState catState) {
+  Widget _buildDetailsSection(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     final categoryNameController = TextEditingController();
@@ -247,7 +232,7 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
         _buildTextField(descriptionEC, 'Descrição do produto',
             'Breve descrição do produto (opcional)'),
         CustomSpacer(customHeight: widget.size.height * 0.025),
-        _buildCategoryDropdown(catState),
+        _buildCategoryDropdown(),
         CustomSpacer(customHeight: widget.size.height * 0.015),
         TextButton(
           onPressed: () {
@@ -255,10 +240,6 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
               context: context,
               builder: (context) => AlertDialog(
                 titlePadding: EdgeInsets.zero,
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: size.width * 0.02,
-                  vertical: size.height * 0.01,
-                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
@@ -361,7 +342,18 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
     );
   }
 
-  Widget _buildCategoryDropdown(CategoryState catState) {
+  Widget _buildCategoryDropdown() {
+    final catState = useAtomState(categoryState)
+      ..when(
+        init: () {},
+        error: (state) {
+          WidgetsBinding.instance.addPostFrameCallback(
+              (_) => showCustomNotification(context, message: state.message));
+
+          resetCategoryStateAction();
+          fetchCategoriesAction();
+        },
+      );
     return catState.when(
       init: () => Center(child: const CircularProgressIndicator()),
       error: (state) => Text(
@@ -370,25 +362,21 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
       ),
       loaded: (state) {
         final categories = state.categories;
-        return Visibility(
-          visible: categories.isNotEmpty,
-          replacement: Text(''),
-          child: DropdownButtonFormField<CategoriaModel>(
-            hint: Text(
-              'Selecione uma categoria.',
-              style: GoogleFonts.inter(color: Colors.black54),
-            ),
-            value: selectedCategory,
-            onChanged: (categoria) =>
-                setState(() => selectedCategory = categoria),
-            items: categories
-                .map((category) => DropdownMenuItem<CategoriaModel>(
-                      value: category,
-                      child: Text(category.nome ?? 'n/a',
-                          style: GoogleFonts.inter()),
-                    ))
-                .toList(),
+        return DropdownButtonFormField<CategoriaModel>(
+          hint: Text(
+            'Selecione uma categoria.',
+            style: GoogleFonts.inter(color: Colors.black54),
           ),
+          value: selectedCategory,
+          onChanged: (categoria) =>
+              setState(() => selectedCategory = categoria),
+          items: categories
+              .map((category) => DropdownMenuItem<CategoriaModel>(
+                    value: category,
+                    child: Text(category.nome ?? 'n/a',
+                        style: GoogleFonts.inter()),
+                  ))
+              .toList(),
         );
       },
     );

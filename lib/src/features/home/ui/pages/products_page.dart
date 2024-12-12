@@ -57,12 +57,12 @@ class _StoragePageState extends State<StoragePage> with HookStateMixin {
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               Text(
                   'Nenhum produto adicionado. Adicione um produto logo a baixo.'),
               CustomSpacer(),
               FloatingActionButton.extended(
-                onPressed: NewProductDialog.show,
+                onPressed: () => NewProductDialog.show(context: context),
                 label: Text('+ Novo Produto'),
               ),
             ],
@@ -85,7 +85,7 @@ class _StoragePageState extends State<StoragePage> with HookStateMixin {
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: FloatingActionButton.extended(
-            onPressed: NewProductDialog.show,
+            onPressed: () => NewProductDialog.show(context: context),
             label: Text('+ Novo Produto'),
           ),
           bottomNavigationBar: Padding(
