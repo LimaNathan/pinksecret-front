@@ -178,6 +178,21 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
   }
 
   void _createProduct() {
+    if (selectedCategory == null) {
+      showCustomNotification(context, message: 'Selecione alguma categoria.');
+    }
+
+    if (productNameEC.text.isEmpty) {
+      showCustomNotification(context,
+          message:
+              'Pelo menos o nome do produto e a categoria devem ser preenchidos.');
+    }
+
+    if (widget.priceController.text == '0,00') {
+      showCustomNotification(context,
+          message: 'O preço do produto deve ser informado.');
+    }
+
     createProductAction(
       CreateProduct(
         nome: productNameEC.text,
@@ -185,12 +200,12 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
         preco: double.tryParse(widget.priceController.text
             .replaceAll('.', '')
             .replaceAll(',', '.')),
-        quantidade: int.tryParse(quantityEC.text),
-        categoria: null, //selectedCategory!.id,
+        quantidade: quantityEC.text.isEmpty ? 1 : int.tryParse(quantityEC.text),
+        categoria: selectedCategory!.id,
         imagemProduto: image != null ? base64Encode(image!) : null,
       ),
     );
-    Modular.to.pop();
+
     image = null;
   }
 
@@ -362,22 +377,25 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
       ),
       loaded: (state) {
         final categories = state.categories;
-        return DropdownButtonFormField<CategoriaModel>(
-          hint: Text(
-            'Selecione uma categoria.',
-            style: GoogleFonts.inter(color: Colors.black54),
-          ),
-          value: selectedCategory,
-          onChanged: (categoria) =>
-              setState(() => selectedCategory = categoria),
-          items: categories
-              .map((category) => DropdownMenuItem<CategoriaModel>(
-                    value: category,
-                    child: Text(category.nome ?? 'n/a',
-                        style: GoogleFonts.inter()),
-                  ))
-              .toList(),
-        );
+        return categories.isEmpty
+            ? Text(
+                'Nenhuma categoria disponível, crie uma ou atualize a página.')
+            : DropdownButtonFormField<CategoriaModel>(
+                hint: Text(
+                  'Selecione uma categoria.',
+                  style: GoogleFonts.inter(color: Colors.black54),
+                ),
+                value: selectedCategory,
+                onChanged: (categoria) =>
+                    setState(() => selectedCategory = categoria),
+                items: categories
+                    .map((category) => DropdownMenuItem<CategoriaModel>(
+                          value: category,
+                          child: Text(category.nome ?? 'n/a',
+                              style: GoogleFonts.inter()),
+                        ))
+                    .toList(),
+              );
       },
     );
   }

@@ -34,7 +34,7 @@ final createProductAction = atomAction1<CreateProduct>((set, product) async {
   final service = Modular.get<ProductServiceInterface>();
   set(createProductState, LoadingProduct());
   service.createProduct(product).then((result) {
-    if (result is CreateProduct) {
+    if (result is ProductCreated) {
       return fetchProductsPaginatedAction.call((page: 0, size: 6));
     } else {
       set(createProductState, result);

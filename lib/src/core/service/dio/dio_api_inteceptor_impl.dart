@@ -27,6 +27,17 @@ class DioApiInteceptorImpl implements ApiInterceptor<Interceptor> {
           return handler.next(response);
         },
         onError: (DioException error, handler) {
+          _logout() {
+            WidgetsBinding.instance.addPostFrameCallback(
+              (_) => showCustomNotification(
+                NavKey.navKey.currentState!.context,
+                message: 'Sua sessão foi encerrada, faça o login novamente.',
+              ),
+            );
+
+            loggoutAction.call();
+          }
+
           if (error.response != null) {
             log(
               '[${error.response?.statusCode}] - ${error.response?.data}',
@@ -42,16 +53,9 @@ class DioApiInteceptorImpl implements ApiInterceptor<Interceptor> {
           }
           final statusCode = error.response?.statusCode;
           final errorMessage = _getMessage(error, statusCode);
-          if (statusCode == 401) {
-            WidgetsBinding.instance.addPostFrameCallback(
-              (_) => showCustomNotification(
-                NavKey.navKey.currentState!.context,
-                message: 'Sua sessão foi encerrada, faça o login novamente.',
-              ),
-            );
 
-            loggoutAction.call();
-          }
+          if (statusCode == 500 && errorMessage.startsWith('JWT')) _logout();
+          if (statusCode == 401) _logout();
 
           return handler.reject(
             DioException(
