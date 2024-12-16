@@ -6,6 +6,7 @@ sealed class ProductState {
     T Function(LoadingProduct state)? loading,
     T Function(ProductsLoaded state)? loaded,
     T Function(ProductError state)? error,
+    T Function(OneProductLoaded state)? oneProductLoaded,
     T Function()? created,
   }) {
     return switch (this) {
@@ -14,6 +15,7 @@ sealed class ProductState {
       LoadingProduct s => loading?.call(s) ?? init(),
       ProductsLoaded s => loaded?.call(s) ?? init(),
       ProductError s => error?.call(s) ?? init(),
+      OneProductLoaded s => oneProductLoaded?.call(s) ?? init(),
     };
   }
 }
@@ -32,6 +34,13 @@ class ProductsLoaded extends ProductState {
     this.page,
     this.totalPages,
     this.totalProducts,
+  });
+}
+
+class OneProductLoaded extends ProductState {
+  final ProductModel product;
+  OneProductLoaded({
+    required this.product,
   });
 }
 

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:asp/asp.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +14,7 @@ import 'package:pinksecret_front/src/features/auth/interactor/states/product_sta
 import 'package:pinksecret_front/src/features/home/iteractor/atoms/product_atoms.dart';
 import 'package:pinksecret_front/src/features/home/models/product_model.dart';
 import 'package:pinksecret_front/src/features/home/ui/components/dialogs/new_product_dialog.dart';
+import 'package:pinksecret_front/src/features/home/ui/components/dialogs/product_details_dialog.dart';
 import 'package:pinksecret_front/src/features/home/ui/components/statistic_tile.dart';
 
 class StoragePage extends StatefulWidget {
@@ -35,6 +35,16 @@ class _StoragePageState extends State<StoragePage> with HookStateMixin {
   Widget build(BuildContext context) {
     final deviceT = useAtomState(deviceType);
     final size = MediaQuery.sizeOf(context);
+
+    useAtomState(createProductState).when(
+      init: () {},
+      loading: (_) => WidgetsBinding.instance
+          .addPostFrameCallback((_) => LoadingOverlay.show(context)),
+      oneProductLoaded: (state) {
+        LoadingOverlay.hide();
+        ProductDetailsDialog.show(context: context, product: state.product);
+      },
+    );
     final productsState = useAtomState(productState)
       ..when(
         init: () {},
@@ -208,6 +218,11 @@ class ProductTile extends StatelessWidget with HookMixin {
 
     final width = MediaQuery.sizeOf(context).width;
     final height = MediaQuery.sizeOf(context).height;
+
+    void onTap() {
+      fetchProductByIdAction(product.id!);
+    }
+
     return Badge(
       isLabelVisible: product.dataCriacao != null &&
           DateTime.parse(product.dataCriacao!).isAfter(
@@ -243,11 +258,7 @@ class ProductTile extends StatelessWidget with HookMixin {
           horizontal: width * .005,
         ),
         child: InkWell(
-          onTap: deviceT != DeviceType.desktop
-              ? () {
-                  log('IS MOBILE CLICKED', name: 'ismobile');
-                }
-              : null,
+          onTap: deviceT != DeviceType.desktop ? onTap : null,
           child: Row(
             children: [
               ProductTileImage(productModel: product),
@@ -291,7 +302,7 @@ class ProductTile extends StatelessWidget with HookMixin {
                     Padding(
                       padding: EdgeInsets.only(right: width * .02),
                       child: IconButton(
-                        onPressed: () {},
+                        onPressed: onTap,
                         icon: Icon(
                           FontAwesomeIcons.pencil,
                           size: 18,

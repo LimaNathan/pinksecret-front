@@ -47,7 +47,7 @@ class ProductServiceImpl implements ProductServiceInterface {
       if (response != null) {
         log('Produto com ID $id encontrado: ${response.data}',
             name: productLogger);
-        return ProductsLoaded([ProductModel.fromJson(response.data)]);
+        return OneProductLoaded(product: ProductModel.fromJson(response.data));
       }
       log('Falha ao buscar produto com ID $id: resposta nula.',
           name: productLogger);

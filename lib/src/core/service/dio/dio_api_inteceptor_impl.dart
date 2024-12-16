@@ -27,7 +27,7 @@ class DioApiInteceptorImpl implements ApiInterceptor<Interceptor> {
           return handler.next(response);
         },
         onError: (DioException error, handler) {
-          _logout() {
+          logout() {
             WidgetsBinding.instance.addPostFrameCallback(
               (_) => showCustomNotification(
                 NavKey.navKey.currentState!.context,
@@ -54,8 +54,8 @@ class DioApiInteceptorImpl implements ApiInterceptor<Interceptor> {
           final statusCode = error.response?.statusCode;
           final errorMessage = _getMessage(error, statusCode);
 
-          if (statusCode == 500 && errorMessage.startsWith('JWT')) _logout();
-          if (statusCode == 401) _logout();
+          if (statusCode == 500 && errorMessage.startsWith('JWT')) logout();
+          if (statusCode == 401) logout();
 
           return handler.reject(
             DioException(

@@ -142,10 +142,13 @@ class _DialogContentState extends State<_DialogContent> with HookStateMixin {
         init: () {},
         created: Modular.to.pop,
         error: (state) {
-          WidgetsBinding.instance.addPostFrameCallback(
-              (_) => showCustomNotification(context, message: state.message));
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            showCustomNotification(context, message: state.message);
+          });
 
           resetCreateProductStateAction();
+          resetProductStateAction();
+          Modular.to.pop();
         },
       );
 
